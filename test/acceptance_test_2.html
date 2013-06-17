@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Boxxer - Acceptance Test</title>
+
+        <link rel="stylesheet" href="../css/global.css" >
+
+        <style>
+            div {
+                background:#aaa;
+            }
+            div div {
+                background:#bbb;
+            }
+            div div div {
+                background:#ccc;
+            }
+            div div div div {
+                background:#ddd;
+            }
+
+            div:hover {
+                background: rgba(0, 255, 0, 0.25);
+            }
+        </style>
+
+        <script>
+            boxxer_debug = true;
+        </script>
+
+        <script src="../build/boxxer.src.js"></script>
+
+        <!--acceptance tests-->
+        <script src="acceptance/acceptance.test.js"></script>
+		<!--acceptance tests-->
+		<script>
+            window.onload = function () {
+                var sSerialized = "<boxxer:box flow='horizontalFlow'>" +
+                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator'></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
+                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator'></boxxer:box>" +
+                    "</boxxer:box>";
+                var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
+
+                oHierarchy
+                    .on(boxxer.events.EventEmitter.ON_RENDER, function () {
+                        console.log("Box rendered;");
+                    });
+
+                oHierarchy.render();
+
+                window.onresize = function () {
+                    oHierarchy.render();
+                };
+            };
+		</script>
+	</head>
+	<body></body>
+</html>

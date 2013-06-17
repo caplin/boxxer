@@ -1,0 +1,23 @@
+body {
+    background:#000;
+    color:#ccc;
+}
+
+.header {
+    background:#111;
+}
+.tileSet {
+    background:#222;
+    overflow:auto;
+}
+    .tileSet .tile {
+        margin:10px;
+        border:1px solid #ccc;
+        height:180px;
+    }
+    .tileSet .tile.expanded {
+        height:360px;
+    }
+.blotter {
+    background:#111;
+}
