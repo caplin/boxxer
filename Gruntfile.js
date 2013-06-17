@@ -90,7 +90,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Default task(s).
-    grunt.registerTask('default', ['concat', 'uglify', 'qunit', 'watch']);
+    grunt.registerTask('default', ['concat', 'uglify', 'qunit']);
     grunt.registerTask('deploy', ['concat', 'uglify', 'qunit', 'copy']);
-    grunt.registerTask('dev', ['concat', 'watch']);
 };

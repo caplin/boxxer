@@ -14,7 +14,6 @@ function handler (req, res) {
 
     if (req.layoutRequest) {
         req.layout = encodeURIComponent(req.layoutRequest[1]);
-        console.log(req.layout);
     }
 
     if (req.method === "POST" || req.method === "PUT") {
@@ -22,13 +21,13 @@ function handler (req, res) {
         req.body = "";
 
         req.on("data", function(chunk) {
-            console.log(chunk);
             req.body += chunk;
         });
 
         req.on("end", function() {
-            console.log(req.body);
-            //req.body = JSON.parse(req.body);
+            if (!req.layoutRequest) {
+                req.body = JSON.parse(req.body);
+            }
             handler[req.method.toLowerCase()](req, res);
         });
 
@@ -107,9 +106,11 @@ handler.delete = function(req, res) {
 handler.post = function(req, res) {
 
     // update a layout
-    if (req.layout) {
-        fs.writeFile("layouts/" + req.layout, req.body.layout, function (error) {
+    if (req.layoutRequest) {
+        console.log('post');
+        fs.writeFile("layouts/" + req.layout, req.body, function (error) {
             if (error) {
+                console.log(error);
                 res.writeHead(500);
                 res.end('Error saving layout');
             } else {
@@ -124,8 +125,9 @@ handler.put = function(req, res) {
 
     // store a NEW layout
     if (req.layoutRequest) {
-        fs.writeFile("layouts/" + req.body.name, req.body.layout, function (error) {
+        fs.writeFile("layouts/" + req.layout, req.body, function (error) {
             if (error) {
+                console.log(error);
                 res.writeHead(500);
                 res.end('Error saving layout');
             } else {

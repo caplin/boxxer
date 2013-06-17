@@ -938,7 +938,7 @@ boxxer.register("async", "Connection", function (b) {
     Connection.prototype.save = function() {
         this._request.onreadystatechange = this.onStateChange.bind(this);
         this._request.open(Connection.POST, this._url, true);
-        this._request.send();
+        this._request.send(this._data);
     };
     /**
      * Send a "PUT" request
@@ -1003,8 +1003,15 @@ boxxer.register("layouts", "Layout", function (b) {
     }
 
     Layout.prototype.getLayout = function() {
-        new b.async.Connection(Layout.URL + "/" + this.getId())
-            .get();
+        var callback = function(data) {
+            console.log(b.mixins.Serializer.deserialize(data.response));
+            var box = b.mixins.Serializer.deserialize(data.response);
+            this.addBox(box);
+        }.bind(this);
+
+        new b.async.Connection(Layout.URL + "/" + this.getId(), {
+            callback: callback
+        }).get();
     };
 
     Layout.prototype.saveLayout = function(name) {
@@ -1020,7 +1027,7 @@ boxxer.register("layouts", "Layout", function (b) {
     };
 
 //    Layout.URL = "http://localhost:666/layout";
-    Layout.URL = window.location.href;
+    Layout.URL = window.location.href + "/layout";
 
     b.layouts.Layout = Layout;
 

@@ -8,8 +8,15 @@ test the asynchronous Box persistence
 
 # Grunt build
 
-Node with npm required.
-Use npm to install grunt and then just run ```npm install``` inside the root directory.
-Then just run ```grunt``` to build a new minified version.
+Node with npm required. Use npm to install grunt and then just run ```npm install``` inside the root directory.
+
+```grunt```
+Run the default build which does unit testing, concating, uglifying
+
+```grunt deploy```
+Run the default build and move the minified file to the server
+
+```grunt watch```
+Run the file watcher which concate files automatically
 
 If adding file make sure to update the Gruntfile.js!

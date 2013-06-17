@@ -36,7 +36,7 @@ boxxer.register("async", "Connection", function (b) {
     Connection.prototype.save = function() {
         this._request.onreadystatechange = this.onStateChange.bind(this);
         this._request.open(Connection.POST, this._url, true);
-        this._request.send();
+        this._request.send(this._data);
     };
     /**
      * Send a "PUT" request
