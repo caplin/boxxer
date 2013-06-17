@@ -2,5 +2,5 @@
 /.idea/*
 /node_modules
 /node_modules/*
-
+boxxer.iml
 npm-debug.log
