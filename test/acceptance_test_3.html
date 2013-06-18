@@ -28,6 +28,7 @@
         boxxer_debug = true;
     </script>
 
+    <script src="../lib/es5-shim.js"></script>
     <script src="../build/boxxer.src.js"></script>
 
     <!--acceptance tests-->
@@ -37,12 +38,13 @@
         window.onload = function () {
             boxxer.Box.MIN_DIMENSION = 0;
 
-            var sSerialized = "<boxxer:box flow='horizontalFlow'>" +
-                    "<boxxer:box width='15%' height='1'></boxxer:box>" +
-                    "<boxxer:box width='1' height='250px'></boxxer:box>" +
+            var sSerialized = "<boxxer:box flow='horizontal'>" +
+                    "<boxxer:box width='15%'></boxxer:box>" +
+                    "<boxxer:box height='250px'></boxxer:box>" +
                 "</boxxer:box>";
 
             var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
+            console.log(oHierarchy.serialize());
 
             oHierarchy
                     .on(boxxer.events.EventEmitter.ON_RENDER, function () {

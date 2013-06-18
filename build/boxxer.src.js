@@ -1,62 +1,3 @@
-//Object.keys shim
-if (typeof Object.keys === 'undefined') {
-	Object.keys = function (object) {
-		var keys = [],
-            key;
-
-		for (key in object) {
-			if (object.hasOwnProperty(key)) {
-				keys.push(key);
-			}
-		}
-
-		return keys;
-	}
-}
-
-//Object.hasOwnProperty shim - needs to be tested
-if (typeof Object.prototype.hasOwnProperty === 'undefined') {
-    Object.prototype.hasOwnProperty = function (property) {
-        //assuming that the inheritance didn't screw up the constructor...
-        return (this[property] && !this.constructor.prototype[property]);
-    }
-}
-
-//Function.bind shim
-//TODO: works, but needs to be tested
-if (typeof Function.prototype.bind !== "function") {
-    Function.prototype.bind = function () {
-        if (typeof this !== "function") {
-            throw new TypeError("Object #<Object> has no method 'bind'");
-        }
-
-        var args = Array.prototype.slice(arguments);
-        var context = args.shift();
-        var that = this;
-
-        return function () {
-            return that.apply(context, args.concat(Array.prototype.slice.call(arguments)));
-        }
-    }
-}
-
-//Array.prototype.indexOf shim
-//TODO: works, but needs to be tested
-if (typeof Array.prototype.indexOf !== "function") {
-    Array.prototype.indexOf= function (search) {
-        var i = 0,
-            len = this.length;
-
-        for (; i < len; i++) {
-            if (search === this[i]) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-}
-
 (function (_g) {
     /**
      * boxxer object
@@ -756,8 +697,8 @@ boxxer.register("mixins", "Serializer", function (b) {
      * @returns {string}
      */
     Serializer.getJSONAttributes = function (box) {
-        return "\"width\":" + box.getWidth().getValue() + "," +
-            "\"height\":" + box.getHeight().getValue() + "";
+        return "\"width\":" + box.getWidth().getSerializedValue() + "," +
+            "\"height\":" + box.getHeight().getSerializedValue() + "";
     };
 
     /**
@@ -766,8 +707,8 @@ boxxer.register("mixins", "Serializer", function (b) {
      * @returns {string}
      */
     Serializer.getXMLAttributes = function (box) {
-        return " width='" + box.getWidth().getValue() + "' " +
-            "height='" + box.getHeight().getValue() + "'";
+        return " width='" + box.getWidth().getSerializedValue() + "' " +
+            "height='" + box.getHeight().getSerializedValue() + "'";
     };
 
     /**
@@ -824,17 +765,10 @@ boxxer.register("mixins", "Serializer", function (b) {
         if (format === Serializer.JSON) {
             box = new b.Box();
             box.setFlowDirection(hierarchy.flow);
-
-            if (hierarchy.width) {
-                box.setWidth(hierarchy.width);
-            }
-
-            if (hierarchy.height) {
-                box.setHeight(hierarchy.height);
-            }
+            box.setWidth(hierarchy.width);
+            box.setHeight(hierarchy.height);
 
             if (hierarchy.decorators) {
-                debugger;
                 decorators = hierarchy.decorator.replace(" ", "").split(",");
 
                 while (decorators.length > 0) {
@@ -851,17 +785,9 @@ boxxer.register("mixins", "Serializer", function (b) {
         } else if (format === Serializer.XML) {
             box = new b.Box();
 
-            if (hierarchy.getAttribute("flow")) {
-                box.setFlowDirection(hierarchy.getAttribute("flow"));
-            }
-
-            if (hierarchy.getAttribute("width")) {
-                box.setWidthDimension(hierarchy.getAttribute("width"));
-            }
-
-            if (hierarchy.getAttribute("height")) {
-                box.setHeightDimension(hierarchy.getAttribute("height"));
-            }
+            box.setFlowDirection(hierarchy.getAttribute("flow"));
+            box.setWidthDimension(hierarchy.getAttribute("width"));
+            box.setHeightDimension(hierarchy.getAttribute("height"));
 
             if (hierarchy.getAttribute("decorators")) {
                 decorators = hierarchy.getAttribute("decorators").replace(" ", "").split(",");
@@ -1003,9 +929,8 @@ boxxer.register("layouts", "Layout", function (b) {
     }
 
     Layout.prototype.getLayout = function() {
-        var callback = function(data) {
-            var data = JSON.parse(data.responseText);
-//            var name = data.name;
+        var callback = function(rawData) {
+            var data = JSON.parse(rawData.responseText);
             var layout = data.layout;
             var box = b.mixins.Serializer.deserialize(layout);
             this.addBox(box);
@@ -1303,7 +1228,7 @@ boxxer.register("render", "Dimension", function (b) {
      * @returns {string}
      */
     Dimension.prototype.getType = function () {
-        return this._type;
+        return (this._type || "");
     };
 
     /**
@@ -1363,10 +1288,25 @@ boxxer.register("render", "Dimension", function (b) {
     };
 
     /**
+     * Returns the serialized value of the Dimension
+     * @returns {String}
+     */
+    Dimension.prototype.getSerializedValue = function () {
+        var type = this.getType();
+        var serialized = this.getValue();
+
+        if (type !== Dimension.WEIGHT) {
+            serialized += this.getType();
+        }
+
+        return serialized;
+    };
+
+    /**
      * @static
      * @type {string}
      */
-    Dimension.PERCENT = "percent";
+    Dimension.PERCENT = "%";
 
     /**
      * @static
@@ -1384,7 +1324,7 @@ boxxer.register("render", "Dimension", function (b) {
      * @static
      * @type {string}
      */
-    Dimension.PIXEL = "pixel";
+    Dimension.PIXEL = "px";
 
     b.render.Dimension = Dimension;
 
@@ -1504,7 +1444,7 @@ boxxer.register("", "Box", function (b) {
      * @param flowDirection {String}
      */
     Box.prototype.setFlowDirection = function (flowDirection) {
-        this._flowDirection = flowDirection;
+        this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
     };
 
     /**
@@ -1632,13 +1572,13 @@ boxxer.register("", "Box", function (b) {
      * @static
      * @type {String}
      */
-    Box.FLOW_VERTICAL = "verticalFlow";
+    Box.FLOW_VERTICAL = "vertical";
 
     /**
      * @static
      * @type {String}
      */
-    Box.FLOW_HORIZONTAL = "horizontalFlow";
+    Box.FLOW_HORIZONTAL = "horizontal";
 
     /**
      * @static

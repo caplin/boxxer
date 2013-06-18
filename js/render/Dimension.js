@@ -65,7 +65,7 @@ boxxer.register("render", "Dimension", function (b) {
      * @returns {string}
      */
     Dimension.prototype.getType = function () {
-        return this._type;
+        return (this._type || "");
     };
 
     /**
@@ -125,10 +125,25 @@ boxxer.register("render", "Dimension", function (b) {
     };
 
     /**
+     * Returns the serialized value of the Dimension
+     * @returns {String}
+     */
+    Dimension.prototype.getSerializedValue = function () {
+        var type = this.getType();
+        var serialized = this.getValue();
+
+        if (type !== Dimension.WEIGHT) {
+            serialized += this.getType();
+        }
+
+        return serialized;
+    };
+
+    /**
      * @static
      * @type {string}
      */
-    Dimension.PERCENT = "percent";
+    Dimension.PERCENT = "%";
 
     /**
      * @static
@@ -146,7 +161,7 @@ boxxer.register("render", "Dimension", function (b) {
      * @static
      * @type {string}
      */
-    Dimension.PIXEL = "pixel";
+    Dimension.PIXEL = "px";
 
     b.render.Dimension = Dimension;
 
