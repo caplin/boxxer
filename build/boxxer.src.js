@@ -1346,11 +1346,18 @@ boxxer.register("", "Box", function (b) {
         b.events.EventEmitter.call(this);
 
         /**
-         * name of the Box
+         * id of the Box
          * @private
          * @type {Object}
          */
         this._id = Box.generateUniqueBoxId();
+
+        /**
+         * Optional custom name  for the box. Use the setter if you wish to use one.
+         * @type {null}
+         * @private
+         */
+        this._name = null;
 
         /**
          * @private
@@ -1493,6 +1500,28 @@ boxxer.register("", "Box", function (b) {
     };
 
     /**
+     * Get the box custom name. Returns null if name was set.
+     * @returns {null|String}
+     */
+    Box.prototype.getName = function() {
+        return this._name;
+    };
+
+    /**
+     * Set the box custom name.
+     * @param name
+     */
+    Box.prototype.setName = function(name) {
+
+        if (Box._nameRegistry[name]) {
+            throw "Box name already exists: " + name;
+        }
+
+        this._name = name;
+        Box._nameRegistry[name] = this.getId();
+    };
+
+    /**
      * returns the Box name
      * @return {String}
      */
@@ -1586,6 +1615,12 @@ boxxer.register("", "Box", function (b) {
     Box._registry = {};
 
     /**
+     * @static
+     * @type {Object}
+     */
+    Box._nameRegistry = {};
+
+    /**
      * static counter for Box ids
      * @static
      * @private
@@ -1604,19 +1639,29 @@ boxxer.register("", "Box", function (b) {
 
     /**
      * removes a Box from the registry
-     * @param sId {String} id of the Box to remove
+     * @param id {String} id of the Box to remove
      */
-    Box.removeBox = function (sId) {
-        delete Box._registry[sId];
+    Box.removeBox = function (id) {
+        delete Box._registry[id];
     };
 
     /**
-     * returns a registered Box from the registry
-     * @param sId {String} the Box id
+     * returns a registered Box from the registry by id
+     * @param id {String} the Box id
      * @return {Box}
      */
-    Box.getById = function (sId) {
-        return Box._registry[sId];
+    Box.getById = function (id) {
+        return Box._registry[id];
+    };
+
+    /**
+     * Returns a registered Box from the registry by name
+     * @param name
+     * @returns {*}
+     */
+    Box.getByName = function(name) {
+        var id = Box._nameRegistry[name];
+        return id ? Box._registry[id] : null;
     };
 
     /**
