@@ -1,39 +1,22 @@
 module.exports = function(grunt) {
 
     var sources = [
+        //intro
+        'js/intro',
+
+        //core
         'js/boxxer.js',
 
-        'js/view/ViewContainer.js',
+        //dependencies
+        'js/modules/**/*.js',
+        'js/decorators/**/*.js',
+
+        //main classes
         'js/Dialog.js',
-
-        'js/decorator/Decorator.js',
-
-        'js/mixins/Adjustable.js',
-        'js/mixins/ElementWrapper.js',
-        'js/mixins/ParentElementWrapper.js',
-        'js/mixins/Serializer.js',
-
-        //'js/async/Async.js',
-        'js/async/Connection.js',
-        'js/layouts/Layout.js',
-
-        'js/events/BoxEvent.js',
-        'js/events/EventEmitter.js',
-
-        'js/render/Dimension.js',
         'js/Box.js',
-        'js/render/BoxRenderer.js',
 
-        //caplin patches
-//        'js_patches/caplin/bootstrap-lite.js',
-//        'js_patches/caplin/ComponentLifeCycleEvents.js',
-//        'js_patches/caplin/Component.js',
-//        'js_patches/caplin/**/*.js',
-//
-//        'js_patches/**/*.js',
-
-        //decorators
-        'js/decorator/**/*.js'
+        //outro
+        'js/outro'
     ];
 
     // config

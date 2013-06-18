@@ -43,11 +43,11 @@
                     "<bbox height='250px'></bbox>" +
                 "</bbox>";
 
-            var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
+            var oHierarchy = boxxer.Serializer.deserialize(sSerialized);
             console.log(oHierarchy.serialize());
 
             oHierarchy
-                    .on(boxxer.events.EventEmitter.ON_RENDER, function () {
+                    .on(boxxer.EventEmitter.ON_RENDER, function () {
                         console.log("Box rendered;");
                     });
 

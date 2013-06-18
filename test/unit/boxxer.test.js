@@ -1,9 +1,10 @@
 module("boxxer");
+
 test('structure', function() {
 
-    var aPrivates = 'renderer,debugMode,getEventTarget,getBody,init,getRenderer,inherit,mix,register'.split(','),
-        aPublics = 'register,mix,inherit,debugMode,utils,init'.split(','),
-        aUtils = 'getBody,getRenderer,getEventTarget,patch'.split(','),
+    var aPrivates = 'renderer,debugMode,getEventTarget,getBody,init,getRenderer,inherit,mix'.split(','),
+        aPublics = 'mix,inherit,debugMode,utils,init'.split(','),
+        aUtils = 'getBody,getRenderer,getEventTarget'.split(','),
         each = function(aData, fCallback) {
 
             var nLen = aData.length,

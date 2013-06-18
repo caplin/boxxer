@@ -36,20 +36,20 @@
 		<!--acceptance tests-->
 		<script>
             window.onload = function () {
-                var sSerialized = "<bbox flow='horizontalFlow'>" +
+                var sSerialized = "<bbox flow='horizontal'>" +
                         "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
                         "<bbox width='150px' height='100px' decorators=''></bbox>" +
-                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
                         "<bbox width='150px' height='100px' decorators=''></bbox>" +
-                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
                         "<bbox width='150px' height='100px' decorators=''></bbox>" +
-                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
                         "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
                     "</bbox>";
-                var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
+                var oHierarchy = boxxer.Serializer.deserialize(sSerialized);
 
                 oHierarchy
-                    .on(boxxer.events.EventEmitter.ON_RENDER, function () {
+                    .on(boxxer.EventEmitter.ON_RENDER, function () {
                         console.log("Box rendered;");
                     });
 

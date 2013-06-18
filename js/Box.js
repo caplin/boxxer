@@ -1,347 +1,348 @@
-boxxer.register("", "Box", function (b) {
-    var regPrefix = "bbox_";
-    var mixins = b.mixins;
+exports.Box = Box;
+
+/**
+ * @constructor Abstract class that provides the basic attributes for each Box instance
+ * @param width {String|Number}
+ * @param height {String|Number}
+ * @param parent {HTMLElement|undefined}
+ */
+function Box(width, height, parent) {
+    //mixin constructors
+    ElementWrapper.call(this);
+    ParentElementWrapper.call(this, parent);
+    EventEmitter.call(this);
 
     /**
-     * @constructor Abstract class that provides the basic attributes for each Box instance
-     * @param width {String|Number}
-     * @param height {String|Number}
-     * @param parent {HTMLElement|undefined}
+     * id of the Box
+     * @private
+     * @type {Object}
      */
-    function Box(width, height, parent) {
-        //mixin constructors
-        mixins.ElementWrapper.call(this);
-        mixins.ParentElementWrapper.call(this, parent);
-        b.events.EventEmitter.call(this);
+    this._id = Box.generateUniqueBoxId();
 
-        /**
-         * id of the Box
-         * @private
-         * @type {Object}
-         */
-        this._id = Box.generateUniqueBoxId();
+    /**
+     * Optional custom name  for the box. Use the setter if you wish to use one.
+     * @type {null}
+     * @private
+     */
+    this._name = null;
 
-        /**
-         * Optional custom name  for the box. Use the setter if you wish to use one.
-         * @type {null}
-         * @private
-         */
-        this._name = null;
+    /**
+     * @private
+     * @type {Object}
+     */
+    this._children = {};
 
-        /**
-         * @private
-         * @type {Object}
-         */
-        this._children = {};
+    /**
+     * property for boxxer.view.View instance to serialize
+     * @type {boxxer.view.ViewContainer|undefined}
+     */
+    this.view = undefined;
 
-        /**
-         * property for boxxer.view.View instance to serialize
-         * @type {boxxer.view.View|undefined}
-         */
-        this.view = undefined;
+    /**
+     * width of the Box
+     * @type {b.render.Dimension}
+     */
+    this.width = new Dimension(width);
 
-        /**
-         * width of the Box
-         * @type {b.render.Dimension}
-         */
-        this.width = new b.render.Dimension(width);
+    /**
+     * height of the Box
+     * @type {b.render.Dimension}
+     */
+    this.height = new Dimension(height);
 
-        /**
-         * height of the Box
-         * @type {b.render.Dimension}
-         */
-        this.height = new b.render.Dimension(height);
+    /**
+     * array of decorator names to apply after rendering
+     * @private
+     * @type {Array}
+     */
+    this._decorators = [];
 
-        /**
-         * array of decorator names to apply after rendering
-         * @private
-         * @type {Array}
-         */
-        this._decorators = [];
+    /**
+     * the direction inside the Box
+     * @private
+     * @type {Object}
+     */
+    this._flowDirection = Box.FLOW_VERTICAL;
 
-        /**
-         * the direction inside the Box
-         * @private
-         * @type {Object}
-         */
-        this._flowDirection = Box.FLOW_VERTICAL;
+    /**
+     * @private
+     * @type {Boolean}
+     */
+    this.isRendered = false;
 
-        /**
-         * @private
-         * @type {Boolean}
-         */
-        this.isRendered = false;
+    //initialize Box
+    this.addClass("boxxer-Box");
+    this.setDataAttribute("box-id", this.getId());
 
-        //initialize Box
-        this.addClass("boxxer-Box");
-        this.setDataAttribute("box-id", this.getId());
+    //registering Box
+    Box._registry[this.getId()] = this;
+}
 
-        //registering Box
-        Box._registry[this.getId()] = this;
+mix(Box, Adjustable);
+mix(Box, ElementWrapper);
+mix(Box, ParentElementWrapper);
+
+mix(Box, Layout);
+mix(Box, Serializer);
+mix(Box, EventEmitter);
+
+/**
+ * adds the decorator specified to the Box instance
+ * @param decoratorName {String}
+ * @returns {Box}
+ */
+Box.prototype.addDecorator = function (decoratorName) {
+    this._decorators.push(decoratorName);
+    return this;
+};
+
+/**
+ * returns the decorators registered for the Box instance
+ * @returns {Array}
+ */
+Box.prototype.getDecorators = function () {
+    return this._decorators;
+};
+
+/**
+ * return the flow direction of the box
+ * @returns {Object}
+ */
+Box.prototype.getFlowDirection = function () {
+    return this._flowDirection;
+};
+
+/**
+ * Set the flow direction for the box
+ * @param flowDirection {String}
+ */
+Box.prototype.setFlowDirection = function (flowDirection) {
+    this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+};
+
+/**
+ * creates a new Dimension for width property
+ * @param value {string|Number}
+ */
+Box.prototype.setWidthDimension = function (value) {
+    this.width = new Dimension(value);
+};
+
+/**
+ * creates a new Dimension for width property
+ * @param value {string|Number}
+ */
+Box.prototype.setHeightDimension = function (value) {
+    this.height = new Dimension(value);
+};
+
+/**
+ * adds a new child to the current box instance
+ * @param width {Number|String} width argument
+ * @param height {Number|String} width argument
+ * @param name {String} name of the new instance in the collection
+ * @returns {Box}
+ */
+Box.prototype.addChild = function (width, height, name) {
+    var box = new Box(width, height, this.getElement());
+    return this.addBox(box, name);
+};
+
+/**
+ * adds the given Box to the children
+ * @param name {String} the child's name
+ * @param box {Box} the child Box
+ * @return {Box}
+ */
+Box.prototype.addBox = function (box, name) {
+    if (!(box instanceof Box)) {
+        throw new TypeError("Argument is not a Box!");
     }
 
-    b.mix(Box, mixins.Adjustable);
-    b.mix(Box, mixins.ElementWrapper);
-    b.mix(Box, mixins.ParentElementWrapper);
+    box.setParentElement(this.getElement());
 
-    b.mix(Box, b.layouts.Layout);
-    b.mix(Box, mixins.Serializer);
-    b.mix(Box, b.events.EventEmitter);
+    this.getChildren()[name || box.getId()] = box;
 
-    /**
-     * adds the decorator specified to the Box instance
-     * @param decoratorName {String}
-     * @returns {Box}
-     */
-    Box.prototype.addDecorator = function (decoratorName) {
-        this._decorators.push(decoratorName);
-        return this;
-    };
+    return box;
+};
 
-    /**
-     * returns the decorators registered for the Box instance
-     * @returns {Array}
-     */
-    Box.prototype.getDecorators = function () {
-        return this._decorators;
-    };
+/**
+ * Get the box custom name. Returns null if name was set.
+ * @returns {null|String}
+ */
+Box.prototype.getName = function() {
+    return this._name;
+};
 
-    /**
-     * return the flow direction of the box
-     * @returns {Object}
-     */
-    Box.prototype.getFlowDirection = function () {
-        return this._flowDirection;
-    };
+/**
+ * Set the box custom name.
+ * @param name
+ */
+Box.prototype.setName = function(name) {
 
-    /**
-     * Set the flow direction for the box
-     * @param flowDirection {String}
-     */
-    Box.prototype.setFlowDirection = function (flowDirection) {
-        this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
-    };
+    if (Box._nameRegistry[name]) {
+        throw "Box name already exists: " + name;
+    }
 
-    /**
-     * creates a new Dimension for width property
-     * @param value {string|Number}
-     */
-    Box.prototype.setWidthDimension = function (value) {
-        this.width = new b.render.Dimension(value);
-    };
+    this._name = name;
+    Box._nameRegistry[name] = this.getId();
+};
 
-    /**
-     * creates a new Dimension for width property
-     * @param value {string|Number}
-     */
-    Box.prototype.setHeightDimension = function (value) {
-        this.height = new b.render.Dimension(value);
-    };
+/**
+ * returns the Box name
+ * @return {String}
+ */
+Box.prototype.getId = function () {
+    return this._id;
+};
 
-    /**
-     * adds a new child to the current box instance
-     * @param width {Number|String} width argument
-     * @param height {Number|String} width argument
-     * @param name {String} name of the new instance in the collection
-     * @returns {Box}
-     */
-    Box.prototype.addChild = function (width, height, name) {
-        var box = new Box(width, height, this.getElement());
-        return this.addBox(box, name);
-    };
+/**
+ * returns a child from the BoxSet
+ * @param name {String} the name of the child
+ * @return {Box}
+ */
+Box.prototype.getChild = function (name) {
+    return this.getChildren()[name];
+};
 
-    /**
-     * adds the given Box to the children
-     * @param name {String} the child's name
-     * @param box {Box} the child Box
-     * @return {Box}
-     */
-    Box.prototype.addBox = function (box, name) {
-        if (!(box instanceof Box)) {
-            throw new TypeError("Argument is not a Box!");
-        }
+/**
+ * returns the children
+ * @return {Object}
+ */
+Box.prototype.getChildren = function () {
+    return this._children;
+};
 
-        box.setParentElement(this.getElement());
+/**
+ * returns the number of children the Box has
+ * @return {Number}
+ */
+Box.prototype.getChildCount = function () {
+    return Object.keys(this.getChildren()).length;
+};
 
-        this.getChildren()[name || box.getId()] = box;
+/**
+ * removes a child Box
+ * @param name {String} the name of the child
+ */
+Box.prototype.removeChild = function (name) {
+    var children = this.getChildren();
+    children[name].close();
+    delete children[name];
+};
 
-        return box;
-    };
+/**
+ * Render the box and its children to the document
+ */
+Box.prototype.render = function () {
+    var parent = this.getParentElement();
+    var boxId = parent.getAttribute("data-box-id");
+    var parentBox = Box.getById(boxId);
+    var eventType = EventEmitter.ON_RENDER;
+    var flowDirection;
 
-    /**
-     * Get the box custom name. Returns null if name was set.
-     * @returns {null|String}
-     */
-    Box.prototype.getName = function() {
-        return this._name;
-    };
+    if (parentBox instanceof Box) {
+        flowDirection = parentBox.getFlowDirection();
+    }
 
-    /**
-     * Set the box custom name.
-     * @param name
-     */
-    Box.prototype.setName = function(name) {
+    BoxRenderer.render(this, parent, flowDirection);
 
-        if (Box._nameRegistry[name]) {
-            throw "Box name already exists: " + name;
-        }
+    //TODO: trigger events regarding whether the Box has already been rendered (render/change)
+    if (this.isRendered) {
+        eventType = EventEmitter.ON_UPDATE;
+    } else {
+        this.isRendered = true;
+    }
 
-        this._name = name;
-        Box._nameRegistry[name] = this.getId();
-    };
+    this.emit(eventType);
+};
 
-    /**
-     * returns the Box name
-     * @return {String}
-     */
-    Box.prototype.getId = function () {
-        return this._id;
-    };
+/**
+ * @static
+ * @type {Number}
+ */
+Box.MIN_DIMENSION = "100px";
 
-    /**
-     * returns a child from the BoxSet
-     * @param name {String} the name of the child
-     * @return {Box}
-     */
-    Box.prototype.getChild = function (name) {
-        return this.getChildren()[name];
-    };
+/**
+ * @static
+ * @type {String}
+ */
+Box.FLOW_VERTICAL = "vertical";
 
-    /**
-     * returns the children
-     * @return {Object}
-     */
-    Box.prototype.getChildren = function () {
-        return this._children;
-    };
+/**
+ * @static
+ * @type {String}
+ */
+Box.FLOW_HORIZONTAL = "horizontal";
 
-    /**
-     * returns the number of children the Box has
-     * @return {Number}
-     */
-    Box.prototype.getChildCount = function () {
-        return Object.keys(this.getChildren()).length;
-    };
+/**
+ * @static
+ * @type {Object}
+ */
+Box._registry = {};
 
-    /**
-     * removes a child Box
-     * @param name {String} the name of the child
-     */
-    Box.prototype.removeChild = function (name) {
-        var children = this.getChildren();
-        children[name].close();
-        delete children[name];
-    };
+/**
+ * @static
+ * @type {Object}
+ */
+Box._nameRegistry = {};
 
-    /**
-     * Render the box and its children to the document
-     */
-    Box.prototype.render = function () {
-        var parent = this.getParentElement();
-        var boxId = parent.getAttribute("data-box-id");
-        var parentBox = Box.getById(boxId);
-        var eventType = b.events.EventEmitter.ON_RENDER;
-        var flowDirection;
+/**
+ * static counter for Box ids
+ * @static
+ * @private
+ * @type {Number}
+ */
+Box.REG_PREFIX = "bbox_";
 
-        if (parentBox instanceof Box) {
-            flowDirection = parentBox.getFlowDirection();
-        }
+/**
+ * static counter for Box ids
+ * @static
+ * @private
+ * @type {Number}
+ */
+Box._id = 0;
 
-        b.render.BoxRenderer.render(this, parent, flowDirection);
+/**
+ * generates a unique "box_[...]"id
+ * @static
+ * @return {String}
+ */
+Box.generateUniqueBoxId = function () {
+    return Box.REG_PREFIX + Box._id++;
+};
 
-        //TODO: trigger events regarding whether the Box has already been rendered (render/change)
-        if (this.isRendered) {
-            eventType = b.events.EventEmitter.ON_UPDATE;
-        } else {
-            this.isRendered = true;
-        }
+/**
+ * removes a Box from the registry
+ * @param id {String} id of the Box to remove
+ */
+Box.removeBox = function (id) {
+    delete Box._registry[id];
+};
 
-        this.emit(eventType);
-    };
+/**
+ * returns a registered Box from the registry by id
+ * @param id {String} the Box id
+ * @return {Box}
+ */
+Box.getById = function (id) {
+    return Box._registry[id];
+};
 
-    /**
-     * @static
-     * @type {Number}
-     */
-    Box.MIN_DIMENSION = "100px";
+/**
+ * Returns a registered Box from the registry by name
+ * @param name
+ * @returns {*}
+ */
+Box.getByName = function(name) {
+    var id = Box._nameRegistry[name];
+    return id ? Box._registry[id] : null;
+};
 
-    /**
-     * @static
-     * @type {String}
-     */
-    Box.FLOW_VERTICAL = "vertical";
-
-    /**
-     * @static
-     * @type {String}
-     */
-    Box.FLOW_HORIZONTAL = "horizontal";
-
-    /**
-     * @static
-     * @type {Object}
-     */
-    Box._registry = {};
-
-    /**
-     * @static
-     * @type {Object}
-     */
-    Box._nameRegistry = {};
-
-    /**
-     * static counter for Box ids
-     * @static
-     * @private
-     * @type {Number}
-     */
+/**
+ * cleans up the Box.s_oRegistry
+ */
+Box.clean = function () {
     Box._id = 0;
-
-    /**
-     * generates a unique "box_[...]"id
-     * @static
-     * @return {String}
-     */
-    Box.generateUniqueBoxId = function () {
-        return regPrefix + Box._id++;
-    };
-
-    /**
-     * removes a Box from the registry
-     * @param sId {String} id of the Box to remove
-     */
-    Box.removeBox = function (id) {
-        delete Box._registry[id];
-    };
-
-    /**
-     * returns a registered Box from the registry by id
-     * @param sId {String} the Box id
-     * @return {Box}
-     */
-    Box.getById = function (id) {
-        return Box._registry[id];
-    };
-
-    /**
-     * Returns a registered Box from the registry by name
-     * @param name
-     * @returns {*}
-     */
-    Box.getByName = function(name) {
-        var id = Box._nameRegistry[name];
-        return id ? Box._registry[id] : null;
-    };
-
-    /**
-     * cleans up the Box.s_oRegistry
-     */
-    Box.clean = function () {
-        Box._id = 0;
-        Box._registry = {};
-    };
-
-    b.Box = Box;
-
-    return Box;
-});
+    Box._registry = {};
+};

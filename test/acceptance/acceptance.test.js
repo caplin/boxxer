@@ -12,9 +12,7 @@ window.onload = function () {
 	parentBox.setFlowDirection(Box.FLOW_HORIZONTAL);
 
     parentBox
-        .addDecorator("HeaderDecorator")
-        .addDecorator("DragDecorator")
-        .addDecorator("DropDecorator");
+        .addDecorator("HeaderDecorator");
 
     for (var i = 0; i < childCount; i++) {
         if (i < split) {

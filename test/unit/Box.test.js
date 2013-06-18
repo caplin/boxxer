@@ -49,5 +49,5 @@
 
 }(
     boxxer.Box,
-    boxxer.render.Dimension
+    boxxer.Dimension
 ));
