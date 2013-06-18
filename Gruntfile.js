@@ -1,8 +1,6 @@
 module.exports = function(grunt) {
 
     var sources = [
-        'js/shims/shims.js',
-
         'js/boxxer.js',
 
         'js/view/ViewContainer.js',
