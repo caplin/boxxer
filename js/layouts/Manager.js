@@ -1,12 +1,15 @@
 boxxer.register("layouts", "Manager", function (b) {
 
     function Manager() {
-        this.url = "/layouts";
     }
 
-    Manager.prototype.getLayouts = function() {
-        // query back end
+    Manager.prototype.getLayouts = function(callback) {
+        new b.async.Connection(Layout.URL + "/" + this.getId(), {
+            data: layout
+        }).save();
     };
+
+    Manager.url = "/layouts";
 
     return Manager;
 });

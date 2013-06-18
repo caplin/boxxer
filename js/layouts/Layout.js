@@ -6,8 +6,10 @@ boxxer.register("layouts", "Layout", function (b) {
 
     Layout.prototype.getLayout = function() {
         var callback = function(data) {
-            console.log(data.response);
-            var box = b.mixins.Serializer.deserialize(JSON.stringify(data.response));
+            var data = JSON.parse(data.responseText);
+//            var name = data.name;
+            var layout = data.layout;
+            var box = b.mixins.Serializer.deserialize(layout);
             this.addBox(box);
         }.bind(this);
 

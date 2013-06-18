@@ -1,6 +1,7 @@
 //var tiles = [];
-var frame = new boxxer.Box();
+var frame = new boxxer.Box("foo");
 frame.getLayout();
+
 //var header = new boxxer.Box();
 //var tileSet = new boxxer.Box(5, 5);
 //var blotter = new boxxer.Box(2, 2);
