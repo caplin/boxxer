@@ -38,10 +38,10 @@
         window.onload = function () {
             boxxer.Box.MIN_DIMENSION = 0;
 
-            var sSerialized = "<boxxer:box flow='horizontal'>" +
-                    "<boxxer:box width='15%'></boxxer:box>" +
-                    "<boxxer:box height='250px'></boxxer:box>" +
-                "</boxxer:box>";
+            var sSerialized = "<bbox flow='horizontal'>" +
+                    "<bbox width='15%'></bbox>" +
+                    "<bbox height='250px'></bbox>" +
+                "</bbox>";
 
             var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
             console.log(oHierarchy.serialize());

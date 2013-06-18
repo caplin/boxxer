@@ -38,7 +38,7 @@ boxxer.register("mixins", "Serializer", function (b) {
         var childCount = box.getChildCount();
         var decorators = box.getDecorators();
         var json = "{" +
-            "\"id\":" + Number(box.getId().replace("boxxer:box_", "")) + "," +
+            "\"id\":" + Number(box.getId().replace("bbox_", "")) + "," +
             "\"flow\":\"" + box.getFlowDirection() + "\"," +
             Serializer.getJSONAttributes(box);
 
@@ -89,8 +89,8 @@ boxxer.register("mixins", "Serializer", function (b) {
         var child;
         var children;
         var decorators = box.getDecorators();
-        var xml = "<boxxer:box" +
-            " id='" + Number(box.getId().replace("boxxer:box_", "")) + "'" +
+        var xml = "<bbox" +
+            " id='" + Number(box.getId().replace("bbox_", "")) + "'" +
             " flow='" + box.getFlowDirection() + "'";
 
         if (typeof name === "string" && name !== "") {
@@ -115,7 +115,7 @@ boxxer.register("mixins", "Serializer", function (b) {
             }
         }
 
-        xml += "</boxxer:box>";
+        xml += "</bbox>";
 
         return xml;
     };
@@ -164,8 +164,7 @@ boxxer.register("mixins", "Serializer", function (b) {
             div.innerHTML = serialized;
             box = (div.firstElementChild || div.children[0]);
 
-            if (box && box.tagName.toLowerCase() === "boxxer:box" ||
-                (box.scopeName === "boxxer" && box.tagName === "box")) {
+            if (box && box.tagName.toLowerCase() === "bbox") {
                 format = Serializer.XML;
                 result = box;
             }

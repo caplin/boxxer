@@ -36,16 +36,16 @@
 		<!--acceptance tests-->
 		<script>
             window.onload = function () {
-                var sSerialized = "<boxxer:box flow='horizontalFlow'>" +
-                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator'></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators=''></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></boxxer:box>" +
-                        "<boxxer:box width='150px' height='100px' decorators='HeaderDecorator'></boxxer:box>" +
-                    "</boxxer:box>";
+                var sSerialized = "<bbox flow='horizontalFlow'>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators=''></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators=''></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators=''></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator,DragDecorator'></bbox>" +
+                        "<bbox width='150px' height='100px' decorators='HeaderDecorator'></bbox>" +
+                    "</bbox>";
                 var oHierarchy = boxxer.mixins.Serializer.deserialize(sSerialized);
 
                 oHierarchy

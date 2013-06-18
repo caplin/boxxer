@@ -1,5 +1,5 @@
 boxxer.register("", "Box", function (b) {
-    var regPrefix = "boxxer:box_";
+    var regPrefix = "bbox_";
     var mixins = b.mixins;
 
     /**
