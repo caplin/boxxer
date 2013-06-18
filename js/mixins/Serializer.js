@@ -126,8 +126,8 @@ boxxer.register("mixins", "Serializer", function (b) {
      * @returns {string}
      */
     Serializer.getJSONAttributes = function (box) {
-        return "\"width\":" + box.getWidth().getValue() + "," +
-            "\"height\":" + box.getHeight().getValue() + "";
+        return "\"width\":" + box.getWidth().getSerializedValue() + "," +
+            "\"height\":" + box.getHeight().getSerializedValue() + "";
     };
 
     /**
@@ -136,8 +136,8 @@ boxxer.register("mixins", "Serializer", function (b) {
      * @returns {string}
      */
     Serializer.getXMLAttributes = function (box) {
-        return " width='" + box.getWidth().getValue() + "' " +
-            "height='" + box.getHeight().getValue() + "'";
+        return " width='" + box.getWidth().getSerializedValue() + "' " +
+            "height='" + box.getHeight().getSerializedValue() + "'";
     };
 
     /**
@@ -194,17 +194,10 @@ boxxer.register("mixins", "Serializer", function (b) {
         if (format === Serializer.JSON) {
             box = new b.Box();
             box.setFlowDirection(hierarchy.flow);
-
-            if (hierarchy.width) {
-                box.setWidth(hierarchy.width);
-            }
-
-            if (hierarchy.height) {
-                box.setHeight(hierarchy.height);
-            }
+            box.setWidth(hierarchy.width);
+            box.setHeight(hierarchy.height);
 
             if (hierarchy.decorators) {
-                debugger;
                 decorators = hierarchy.decorator.replace(" ", "").split(",");
 
                 while (decorators.length > 0) {
@@ -221,17 +214,9 @@ boxxer.register("mixins", "Serializer", function (b) {
         } else if (format === Serializer.XML) {
             box = new b.Box();
 
-            if (hierarchy.getAttribute("flow")) {
-                box.setFlowDirection(hierarchy.getAttribute("flow"));
-            }
-
-            if (hierarchy.getAttribute("width")) {
-                box.setWidthDimension(hierarchy.getAttribute("width"));
-            }
-
-            if (hierarchy.getAttribute("height")) {
-                box.setHeightDimension(hierarchy.getAttribute("height"));
-            }
+            box.setFlowDirection(hierarchy.getAttribute("flow"));
+            box.setWidthDimension(hierarchy.getAttribute("width"));
+            box.setHeightDimension(hierarchy.getAttribute("height"));
 
             if (hierarchy.getAttribute("decorators")) {
                 decorators = hierarchy.getAttribute("decorators").replace(" ", "").split(",");

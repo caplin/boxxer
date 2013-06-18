@@ -112,7 +112,7 @@ boxxer.register("", "Box", function (b) {
      * @param flowDirection {String}
      */
     Box.prototype.setFlowDirection = function (flowDirection) {
-        this._flowDirection = flowDirection;
+        this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
     };
 
     /**
@@ -240,13 +240,13 @@ boxxer.register("", "Box", function (b) {
      * @static
      * @type {String}
      */
-    Box.FLOW_VERTICAL = "verticalFlow";
+    Box.FLOW_VERTICAL = "vertical";
 
     /**
      * @static
      * @type {String}
      */
-    Box.FLOW_HORIZONTAL = "horizontalFlow";
+    Box.FLOW_HORIZONTAL = "horizontal";
 
     /**
      * @static
