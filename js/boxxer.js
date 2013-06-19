@@ -4,6 +4,17 @@ var global = this;
  * @type {Object}
  */
 var exports = {};
+
+/**
+ * boxxer API object
+ * @type {Object}
+ */
+var api = Object.create(exports);
+
+/**
+ * old boxxer
+ * @type {Object}
+ */
 var _boxxer = global.boxxer;
 
 /**
@@ -18,7 +29,8 @@ if (_boxxer) {
     exports._boxxer = _boxxer;
 }
 
-global.boxxer = exports;
+//export API object
+global.boxxer = api;
 
 /**
  * descendant class level constructor
@@ -32,6 +44,18 @@ function Surrogate() {}
  */
 function debugMode() {
     return (global.boxxer_debug === true);
+}
+
+/**
+ * removes an element from its parent element
+ * @param element {HTMLElement}
+ */
+function removeElement(element) {
+    var parent = element.parentNode;
+
+    if (parent) {
+        parent.removeChild(element);
+    }
 }
 
 /**

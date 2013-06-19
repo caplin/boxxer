@@ -1,40 +1,49 @@
 exports.Dialog = Dialog;
 
 /**
- * @param [view] {ViewContainer}
- * @param [callback] {Function}
- * @param [context] {Object}
+ * @param [width] {Number|String}
+ * @param [height] {Number|String}
+ * @param [left] {Number|String}
+ * @param [right] {Number|String}
  * @constructor Dialog
  */
-function Dialog(view, callback, context) {
+function Dialog(width, height, left, right) {
     var element = document.createElement("div");
     element.style.position = "absolute";
 
     this.element = element;
-    this.view = view;
-    this.width = 0;
-    this.height = 0;
-    this.openContext = context || this;
-    this.openCallback = callback;
+    this.width = new Dimension(width);
+    this.height = new Dimension(height);
+    this.left = left || Dialog.CENTER;
+    this.right = right || Dialog.CENTER;
+    this.viewContainer = new ViewContainer(element);
 }
 
 /**
  * opens the Dialog
- * @param [view] {ViewContainer}
- * @param [width] {Number}
- * @param [height] {Number}
+ * @return {Dialog}
  */
-Dialog.prototype.open = function (view, width, height) {
+Dialog.prototype.open = function () {
+    var body = getBody();
     var element = this.element;
-    var viewContent = (view || this.view).render(element);
+
+    element.style.width = this.width.calculate(body.offsetWidth, 1);
+    element.style.height = this.height.calculate(body.offsetHeight, 1);
+
+    this.renderViewContent(element);
+
+    body.appendChild(element);
+
+    return this;
+};
+
+/**
+ * renders the ViewContent into the Dialog
+ * @param element {HTMLElement}
+ */
+Dialog.prototype.renderViewContent = function (element) {
+    var viewContent = this.viewContainer.render();
     var tempElement;
-
-    element.style.width = (this.width || width) + "px";
-    element.style.height = (this.height || height) + "px";
-
-    if (typeof this.openCallback === "function") {
-        this.openCallback.call(this.openContext || this, this);
-    }
 
     if (viewContent) {
         if (viewContent instanceof Node) {
@@ -42,8 +51,22 @@ Dialog.prototype.open = function (view, width, height) {
         } else if (typeof viewContent === "string") {
             tempElement = document.createElement("div");
             tempElement.innerHTML = viewContent;
-            //append content wrapper firstChildElement
+
             element.appendChild(tempElement.firstElementChild);
         }
     }
 };
+
+/**
+ * closes the dialog and destroys the Box
+ */
+Dialog.prototype.close = function () {
+    this.box.destroy();
+    removeElement(this.getElement());
+};
+
+/**
+ * @static
+ * @type {String}
+ */
+Dialog.CENTER = "center";

@@ -118,6 +118,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    return this;
 };
 
 /**
@@ -126,6 +127,7 @@ Box.prototype.setFlowDirection = function (flowDirection) {
  */
 Box.prototype.setWidthDimension = function (value) {
     this.width = new Dimension(value);
+    return this;
 };
 
 /**
@@ -134,6 +136,7 @@ Box.prototype.setWidthDimension = function (value) {
  */
 Box.prototype.setHeightDimension = function (value) {
     this.height = new Dimension(value);
+    return this;
 };
 
 /**
@@ -145,7 +148,8 @@ Box.prototype.setHeightDimension = function (value) {
  */
 Box.prototype.addChild = function (width, height, name) {
     var box = new Box(width, height, this.getElement());
-    return this.addBox(box, name);
+    this.addBox(box, name);
+    return this;
 };
 
 /**
@@ -163,7 +167,7 @@ Box.prototype.addBox = function (box, name) {
 
     this.getChildren()[name || box.getId()] = box;
 
-    return box;
+    return this;
 };
 
 /**
@@ -175,17 +179,19 @@ Box.prototype.getName = function() {
 };
 
 /**
- * Set the box custom name.
- * @param name
+ * Set a custom name for the Box and register it.
+ * @param name {String}
  */
 Box.prototype.setName = function(name) {
-
     if (Box._nameRegistry[name]) {
         throw "Box name already exists: " + name;
     }
 
     this._name = name;
+
     Box._nameRegistry[name] = this.getId();
+
+    return this;
 };
 
 /**
@@ -229,6 +235,7 @@ Box.prototype.removeChild = function (name) {
     var children = this.getChildren();
     children[name].close();
     delete children[name];
+    return this;
 };
 
 /**
@@ -255,6 +262,18 @@ Box.prototype.render = function () {
     }
 
     this.emit(eventType);
+
+    return this;
+};
+
+/**
+ * destroys and removes the Box
+ */
+Box.prototype.destroy = function () {
+    delete Box._nameRegistry[this.getName()];
+    delete Box._registry[this.getId()];
+
+    removeElement(this.getElement());
 };
 
 /**

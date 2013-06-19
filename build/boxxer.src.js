@@ -6,6 +6,17 @@ var global = this;
  * @type {Object}
  */
 var exports = {};
+
+/**
+ * boxxer API object
+ * @type {Object}
+ */
+var api = Object.create(exports);
+
+/**
+ * old boxxer
+ * @type {Object}
+ */
 var _boxxer = global.boxxer;
 
 /**
@@ -20,7 +31,8 @@ if (_boxxer) {
     exports._boxxer = _boxxer;
 }
 
-global.boxxer = exports;
+//export API object
+global.boxxer = api;
 
 /**
  * descendant class level constructor
@@ -34,6 +46,18 @@ function Surrogate() {}
  */
 function debugMode() {
     return (global.boxxer_debug === true);
+}
+
+/**
+ * removes an element from its parent element
+ * @param element {HTMLElement}
+ */
+function removeElement(element) {
+    var parent = element.parentNode;
+
+    if (parent) {
+        parent.removeChild(element);
+    }
 }
 
 /**
@@ -1487,18 +1511,27 @@ Dimension.PIXEL = "px";
 exports.ViewContainer = ViewContainer;
 
 /**
- * abstract class to maintain custom user views inside Box and Panel instances
+ * class to maintain custom user views inside Box and Panel instances
  * @constructor ViewContainer
  */
-function ViewContainer(box) {
-    this.box = box;
+function ViewContainer(parent) {
+    this.box = new Box(1, 1, parent);
 }
 
 /**
- * renders the ViewContainer, invoked when the Panel or Box finished rendering
- * @param element {HTMLElement}containing element
+ * returns the Box in the ViewContainer
+ * @returns {Box}
  */
-ViewContainer.prototype.render = function (element) {};
+ViewContainer.prototype.getBox = function () {
+    return this.box;
+};
+
+/**
+ * renders the ViewContainer, invoked when the Panel or Box finished rendering
+ */
+ViewContainer.prototype.render = function () {
+    return this.box.render().getElement();
+};
 
 /**
  * serializes the ViewContainer
@@ -1533,40 +1566,49 @@ boxxer.createDecorator("HeaderDecorator", {
 exports.Dialog = Dialog;
 
 /**
- * @param [view] {ViewContainer}
- * @param [callback] {Function}
- * @param [context] {Object}
+ * @param [width] {Number|String}
+ * @param [height] {Number|String}
+ * @param [left] {Number|String}
+ * @param [right] {Number|String}
  * @constructor Dialog
  */
-function Dialog(view, callback, context) {
+function Dialog(width, height, left, right) {
     var element = document.createElement("div");
     element.style.position = "absolute";
 
     this.element = element;
-    this.view = view;
-    this.width = 0;
-    this.height = 0;
-    this.openContext = context || this;
-    this.openCallback = callback;
+    this.width = new Dimension(width);
+    this.height = new Dimension(height);
+    this.left = left || Dialog.CENTER;
+    this.right = right || Dialog.CENTER;
+    this.viewContainer = new ViewContainer(element);
 }
 
 /**
  * opens the Dialog
- * @param [view] {ViewContainer}
- * @param [width] {Number}
- * @param [height] {Number}
+ * @return {Dialog}
  */
-Dialog.prototype.open = function (view, width, height) {
+Dialog.prototype.open = function () {
+    var body = getBody();
     var element = this.element;
-    var viewContent = (view || this.view).render(element);
+
+    element.style.width = this.width.calculate(body.offsetWidth, 1);
+    element.style.height = this.height.calculate(body.offsetHeight, 1);
+
+    this.renderViewContent(element);
+
+    body.appendChild(element);
+
+    return this;
+};
+
+/**
+ * renders the ViewContent into the Dialog
+ * @param element {HTMLElement}
+ */
+Dialog.prototype.renderViewContent = function (element) {
+    var viewContent = this.viewContainer.render();
     var tempElement;
-
-    element.style.width = (this.width || width) + "px";
-    element.style.height = (this.height || height) + "px";
-
-    if (typeof this.openCallback === "function") {
-        this.openCallback.call(this.openContext || this, this);
-    }
 
     if (viewContent) {
         if (viewContent instanceof Node) {
@@ -1574,11 +1616,25 @@ Dialog.prototype.open = function (view, width, height) {
         } else if (typeof viewContent === "string") {
             tempElement = document.createElement("div");
             tempElement.innerHTML = viewContent;
-            //append content wrapper firstChildElement
+
             element.appendChild(tempElement.firstElementChild);
         }
     }
 };
+
+/**
+ * closes the dialog and destroys the Box
+ */
+Dialog.prototype.close = function () {
+    this.box.destroy();
+    removeElement(this.getElement());
+};
+
+/**
+ * @static
+ * @type {String}
+ */
+Dialog.CENTER = "center";
 
 exports.Box = Box;
 
@@ -1700,6 +1756,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    return this;
 };
 
 /**
@@ -1708,6 +1765,7 @@ Box.prototype.setFlowDirection = function (flowDirection) {
  */
 Box.prototype.setWidthDimension = function (value) {
     this.width = new Dimension(value);
+    return this;
 };
 
 /**
@@ -1716,6 +1774,7 @@ Box.prototype.setWidthDimension = function (value) {
  */
 Box.prototype.setHeightDimension = function (value) {
     this.height = new Dimension(value);
+    return this;
 };
 
 /**
@@ -1727,7 +1786,8 @@ Box.prototype.setHeightDimension = function (value) {
  */
 Box.prototype.addChild = function (width, height, name) {
     var box = new Box(width, height, this.getElement());
-    return this.addBox(box, name);
+    this.addBox(box, name);
+    return this;
 };
 
 /**
@@ -1745,7 +1805,7 @@ Box.prototype.addBox = function (box, name) {
 
     this.getChildren()[name || box.getId()] = box;
 
-    return box;
+    return this;
 };
 
 /**
@@ -1757,17 +1817,19 @@ Box.prototype.getName = function() {
 };
 
 /**
- * Set the box custom name.
- * @param name
+ * Set a custom name for the Box and register it.
+ * @param name {String}
  */
 Box.prototype.setName = function(name) {
-
     if (Box._nameRegistry[name]) {
         throw "Box name already exists: " + name;
     }
 
     this._name = name;
+
     Box._nameRegistry[name] = this.getId();
+
+    return this;
 };
 
 /**
@@ -1811,6 +1873,7 @@ Box.prototype.removeChild = function (name) {
     var children = this.getChildren();
     children[name].close();
     delete children[name];
+    return this;
 };
 
 /**
@@ -1837,6 +1900,18 @@ Box.prototype.render = function () {
     }
 
     this.emit(eventType);
+
+    return this;
+};
+
+/**
+ * destroys and removes the Box
+ */
+Box.prototype.destroy = function () {
+    delete Box._nameRegistry[this.getName()];
+    delete Box._registry[this.getId()];
+
+    removeElement(this.getElement());
 };
 
 /**
@@ -1927,6 +2002,62 @@ Box.getByName = function(name) {
 Box.clean = function () {
     Box._id = 0;
     Box._registry = {};
+};
+
+/**
+ * @param setup {Object} map of settings
+ *
+ * Schema: {
+ *         [width] {Number|String}
+ *         [height] {Number|String}
+ *         [parent] {HTMLElement}
+ *         [flow] {String}
+ *     }
+ *
+ * @return {Box}
+ */
+api.createBox = function createBox(setup) {
+    var flow,
+        box;
+
+    setup = setup || {};
+
+    flow = setup.flow;
+    box = new Box(
+        setup.width,
+        setup.height,
+        (setup.parent || setup.container)
+    );
+
+    box.setFlowDirection(flow);
+
+    return box;
+};
+/**
+ * @param setup {Object} map of settings
+ *
+ * Schema: {
+ *         [width] {Number|String}
+ *         [height] {Number|String}
+ *         [left] {Number|String}
+ *         [right] {Number|String}
+ *     }
+ *
+ * @return {Dialog}
+ */
+api.createDialog = function createDialog(setup) {
+    var dialog;
+
+    setup = setup || {};
+
+    dialog = new Dialog(
+        setup.width,
+        setup.height,
+        setup.left,
+        setup.right
+    );
+
+    return dialog;
 };
 
 

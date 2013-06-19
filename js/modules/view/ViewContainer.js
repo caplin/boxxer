@@ -1,18 +1,27 @@
 exports.ViewContainer = ViewContainer;
 
 /**
- * abstract class to maintain custom user views inside Box and Panel instances
+ * class to maintain custom user views inside Box and Panel instances
  * @constructor ViewContainer
  */
-function ViewContainer(box) {
-    this.box = box;
+function ViewContainer(parent) {
+    this.box = new Box(1, 1, parent);
 }
 
 /**
- * renders the ViewContainer, invoked when the Panel or Box finished rendering
- * @param element {HTMLElement}containing element
+ * returns the Box in the ViewContainer
+ * @returns {Box}
  */
-ViewContainer.prototype.render = function (element) {};
+ViewContainer.prototype.getBox = function () {
+    return this.box;
+};
+
+/**
+ * renders the ViewContainer, invoked when the Panel or Box finished rendering
+ */
+ViewContainer.prototype.render = function () {
+    return this.box.render().getElement();
+};
 
 /**
  * serializes the ViewContainer

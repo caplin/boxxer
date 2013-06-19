@@ -15,6 +15,9 @@ module.exports = function(grunt) {
         'js/Dialog.js',
         'js/Box.js',
 
+        //api
+        'js/api.js',
+
         //outro
         'js/outro'
     ];
