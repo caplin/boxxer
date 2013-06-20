@@ -143,7 +143,8 @@ exports.debugMode = debugMode;
 exports.utils = {
     getBody : getBody,
     getRenderer : getRenderer,
-    getEventTarget : getEventTarget
+    getEventTarget : getEventTarget,
+    removeElement: removeElement
 };
 
 //expose initialize function
