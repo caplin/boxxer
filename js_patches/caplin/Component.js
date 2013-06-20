@@ -46,8 +46,6 @@ caplin.component.Component = function()
 	
 };
 
-caplin.implement(caplin.component.Component, caplin.component.ComponentLifecycleEvents);
-
 /**
  * Returns a reference to the container that is hosting this component. If no container has been
  * set then this will return undefined.
@@ -100,7 +98,7 @@ caplin.component.Component.prototype.setFrame = function(oComponentFrame)
 caplin.component.Component.prototype.getUniqueComponentId = function()
 {
 	throw new caplin.core.Error(caplin.core.Error.UNIMPLEMENTED_INTERFACE, "Component.getUniqueComponentId() has not been implemented.");
-}
+};
 
 /**
  * Invoked when the windowing environment needs to display this component. It returns the HTML
