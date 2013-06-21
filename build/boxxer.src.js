@@ -145,7 +145,8 @@ exports.debugMode = debugMode;
 exports.utils = {
     getBody : getBody,
     getRenderer : getRenderer,
-    getEventTarget : getEventTarget
+    getEventTarget : getEventTarget,
+    removeElement: removeElement
 };
 
 //expose initialize function
@@ -679,6 +680,81 @@ Adjustable.prototype.setHeight = function (height) {
 Adjustable.prototype.setDimensions = function (width, height) {
     this.setWidth(width);
     this.setHeight(height);
+};
+
+exports.BoxComponent = BoxComponent;
+
+/**
+ * Component adapter class to provide ComponentLifeCycleEvents for the Component inside the Box
+ * @param component {caplin.component.Component|undefined}
+ * @constructor BoxComponent
+ */
+function BoxComponent(component) {
+    /**
+     * @type {caplin.component.Component|undefined}
+     */
+    this.component = component;
+}
+
+/**
+ * sets the component on the Box instance
+ * @param component {caplin.component.Component}
+ * @returns {Box}
+ */
+BoxComponent.prototype.setComponent = function (component) {
+    if (component) {
+        this.component = component;
+    }
+
+    return this;
+};
+
+/**
+ * returns the Component
+ * @returns {caplin.component.Component}
+ */
+BoxComponent.prototype.getComponent = function () {
+    return this.component;
+};
+
+/**
+ * invokes onOpen or onResize for the Component inside the Box
+ * instance depending whether the Box has been rendered or not.
+ * @param box {Box}
+ * @returns {Box}
+ */
+BoxComponent.render = function (box) {
+    var component = box.getComponent();
+    var element;
+
+    if (component) {
+        element = box.getElement();
+
+        //trigger open if not rendered
+        if (!box.isRendered) {
+            component.onOpen(element.offsetWidth, element.offsetHeight);
+        } else {
+            //trigger resize
+            component.onResize(element.offsetWidth, element.offsetHeight);
+        }
+    }
+
+    return this;
+};
+
+/**
+ * invokes onClose for the Component inside the Box instance
+ * @param box {Box}
+ * @returns {Box}
+ */
+BoxComponent.destroy = function (box) {
+    var component = box.getComponent();
+
+    if (component) {
+        component.onClose();
+    }
+
+    return box;
 };
 
 exports.ElementWrapper = ElementWrapper;
@@ -1649,6 +1725,7 @@ function Box(width, height, parent) {
     ElementWrapper.call(this);
     ParentElementWrapper.call(this, parent);
     EventEmitter.call(this);
+    BoxComponent.call(this);
 
     /**
      * id of the Box
@@ -1723,6 +1800,7 @@ mix(Box, ParentElementWrapper);
 mix(Box, Layout);
 mix(Box, Serializer);
 mix(Box, EventEmitter);
+mix(Box, BoxComponent);
 
 /**
  * adds the decorator specified to the Box instance
@@ -1891,6 +1969,7 @@ Box.prototype.render = function () {
     }
 
     BoxRenderer.render(this, parent, flowDirection);
+    BoxComponent.render(this);
 
     //TODO: trigger events regarding whether the Box has already been rendered (render/change)
     if (this.isRendered) {
@@ -2029,9 +2108,7 @@ api.createBox = function createBox(setup) {
         (setup.parent || setup.container)
     );
 
-    box.setFlowDirection(flow);
-
-    return box;
+    return box.setFlowDirection(flow).setComponent(setup.component);
 };
 /**
  * @param setup {Object} map of settings

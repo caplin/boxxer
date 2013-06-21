@@ -23,9 +23,7 @@ api.createBox = function createBox(setup) {
         (setup.parent || setup.container)
     );
 
-    box.setFlowDirection(flow);
-
-    return box;
+    return box.setFlowDirection(flow).setComponent(setup.component);
 };
 /**
  * @param setup {Object} map of settings
