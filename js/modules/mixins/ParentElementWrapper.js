@@ -27,8 +27,11 @@ ParentElementWrapper.prototype.getParentElement = function () {
  */
 ParentElementWrapper.prototype.setParentElement = function (parent) {
     var element = this.getElement();
+
     if (element.parentElement !== parent && this._parentElement !== parent) {
         this._parentElement = parent;
         this._parentElement.appendChild(element);
     }
+
+    return this;
 };
