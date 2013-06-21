@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+
+        <script src="../../build/boxxer.src.js"></script>
+
+        <script src="">
+            var component = {
+                onOpen: function (width, height) {
+                    console.log("Component open " + width + "x" + height);
+                },
+                onClose: function () {
+                    console.log("Component close");
+                },
+                onResize: function (width, height) {
+                    console.log("Component resize " + width + "x" + height);
+                }
+            };
+
+            var box = boxxer.createBox({
+                "width": 400,
+                "height": 400,
+                "component": component
+            });
+
+
+
+
+            window.onload = function () {
+                var parent = document.getElementById("component-container");
+
+                box.setParentElement(parent);
+                box.render();
+            };
+
+        </script>
+    </head>
+    <body>
+        <div id="component-container"></div>
+    </body>
+</html>
