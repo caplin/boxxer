@@ -25,9 +25,7 @@ if (!caplin.component) caplin.component = {};
  * @constructor
  * @interface
  */
-caplin.component.ComponentLifecycleEvents = function() 
-{
-};
+caplin.component.ComponentLifecycleEvents = function() {};
 
 
 /**
@@ -43,10 +41,7 @@ caplin.component.ComponentLifecycleEvents = function()
  * @param {int} nWidth The width of the frame, in pixels.
  * @param {int} nHeight The height of the frame, in pixels.
  */
-caplin.component.ComponentLifecycleEvents.prototype.onOpen = function(nWidth, nHeight)
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onOpen = function(nWidth, nHeight) {};
 
 /**
  * Invoked when the frame containing this component is closed.
@@ -62,10 +57,7 @@ caplin.component.ComponentLifecycleEvents.prototype.onOpen = function(nWidth, nH
  * to clean up any resources it has opened within its constructor, and not those that it would
  * have opened within <code>onOpen()</code>.</p>
  */
-caplin.component.ComponentLifecycleEvents.prototype.onClose = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onClose = function() {};
 
 /**
  * Invoked when a frame that has been hidden (see {@link #onHide}) is now back in view. It
@@ -74,10 +66,7 @@ caplin.component.ComponentLifecycleEvents.prototype.onClose = function()
  * <p>Note that this method is not called when the component within the frame is first
  * displayed (see {@link #onOpen}).</p>
  */
-caplin.component.ComponentLifecycleEvents.prototype.onShow = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onShow = function() {};
 
 /**
  * Invoked when a frame is no longer in view. It should stop or suspend any resources that may
@@ -86,30 +75,21 @@ caplin.component.ComponentLifecycleEvents.prototype.onShow = function()
  * 
  * @see #onShow
  */
-caplin.component.ComponentLifecycleEvents.prototype.onHide = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onHide = function() {};
 
 /**
  * Invoked when the frame has been minimized.
  * 
  * @see #onRestore
  */
-caplin.component.ComponentLifecycleEvents.prototype.onMinimize = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onMinimize = function() {};
 
 /**
  * Invoked when the frame has been maximized.
  * 
  * @see #onRestore
  */
-caplin.component.ComponentLifecycleEvents.prototype.onMaximize = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onMaximize = function() {};
 
 /**
  * Invoked when the frame has been restored from a minimized or maximized state.
@@ -117,10 +97,7 @@ caplin.component.ComponentLifecycleEvents.prototype.onMaximize = function()
  * @see #onMinimize
  * @see #onMaximize
  */
-caplin.component.ComponentLifecycleEvents.prototype.onRestore = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onRestore = function() {};
 
 /**
  * Invoked when the dimensions of the frame change.
@@ -128,23 +105,14 @@ caplin.component.ComponentLifecycleEvents.prototype.onRestore = function()
  * @param {int} nWidth The new width of the frame, in pixels.
  * @param {int} nHeight The new height of the frame, in pixels.
  */
-caplin.component.ComponentLifecycleEvents.prototype.onResize = function(nWidth, nHeight)
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onResize = function(nWidth, nHeight) {};
 
 /**
  * Invoked when the frame becomes the active or focused frame within the page.
  */
-caplin.component.ComponentLifecycleEvents.prototype.onActivate = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onActivate = function() {};
 
 /**
  * Invoked when the frame ceases to be the active or focused frame within the page.
  */
-caplin.component.ComponentLifecycleEvents.prototype.onDeactivate = function()
-{
-	
-};
+caplin.component.ComponentLifecycleEvents.prototype.onDeactivate = function() {};

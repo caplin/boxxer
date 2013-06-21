@@ -41,10 +41,7 @@ if (!caplin.component) caplin.component = {};
  * @implements caplin.component.ComponentLifecycleEvents
  * @component
  */
-caplin.component.Component = function() 
-{
-	
-};
+caplin.component.Component = function()  {};
 
 /**
  * Returns a reference to the container that is hosting this component. If no container has been
@@ -53,10 +50,7 @@ caplin.component.Component = function()
  * @deprecated
  * @return {caplin.component.container.Container} oContainer The container hosting this component. 
  */
-caplin.component.Component.prototype.getContainer = function()
-{
-	
-};
+caplin.component.Component.prototype.getContainer = function() {};
 
 /**
  * Provides a reference to the container that will be hosting this component.
@@ -67,8 +61,6 @@ caplin.component.Component.prototype.getContainer = function()
  */
 caplin.component.Component.prototype.setContainer = function(oContainer)
 {
-	
-	
 	if(this.setFrame != caplin.component.Component.prototype.setFrame)
 	{
 		this.setFrame(oContainer);
@@ -82,8 +74,6 @@ caplin.component.Component.prototype.setContainer = function(oContainer)
  */
 caplin.component.Component.prototype.setFrame = function(oComponentFrame)
 {
-	
-	
 	if(this.setContainer != caplin.component.Component.prototype.setContainer)
 	{
 		this.setContainer(oComponentFrame);
@@ -166,7 +156,4 @@ caplin.component.Component.prototype.getSerializedState = function()
  * {@link caplin.services.security.PermissionService#canUserPerformAction}.
  * @type caplin.services.security.PermissionKey
  */
-caplin.component.Component.prototype.getPermissionKey = function()
-{
-	return null;
-};
+caplin.component.Component.prototype.getPermissionKey = function() {};
