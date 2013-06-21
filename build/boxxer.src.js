@@ -777,6 +777,7 @@ function ElementWrapper() {
  */
 ElementWrapper.prototype._setElementWidth = function (width) {
     this.getElement().style.width = (width + "px");
+    return this;
 };
 
 /**
@@ -785,6 +786,7 @@ ElementWrapper.prototype._setElementWidth = function (width) {
  */
 ElementWrapper.prototype._setElementHeight = function (height) {
     this.getElement().style.height = (height + "px");
+    return this;
 };
 
 /**
@@ -808,6 +810,8 @@ ElementWrapper.prototype.addClass = function (className) {
         this.getElement()
             .setAttribute("class", classes.join(" "));
     }
+
+    return this;
 };
 
 /**
@@ -833,6 +837,8 @@ ElementWrapper.prototype.getAttribute = function (attribute) {
 ElementWrapper.prototype.setAttribute = function (attribute, value) {
     this.getElement()
         .setAttribute(attribute, (value || "").toString());
+
+    return this;
 };
 
 /**
@@ -852,21 +858,25 @@ ElementWrapper.prototype.getDataAttribute = function (attribute) {
 ElementWrapper.prototype.setDataAttribute = function (attribute, value) {
     this.getElement()
         .setAttribute("data-" + attribute, value);
+
+    return this;
 };
 
 /**
  * sets or returns the text content of the Box instance
- * @param sText {String} name of the attribute
+ * @param text {String} name of the attribute
  * @return {String|undefined}
  */
-ElementWrapper.prototype.text = function (sText) {
+ElementWrapper.prototype.text = function (text) {
     var element = this.getElement();
 
-    if (typeof sText !== "string") {
+    if (typeof text !== "string") {
         return element.innerText;
     } else {
-        element.innerText = sText;
+        element.innerText = text;
     }
+
+    return this;
 };
 
 /**
@@ -882,6 +892,8 @@ ElementWrapper.prototype.html = function (html) {
     } else {
         element.innerHTML = html;
     }
+
+    return this;
 };
 
 exports.ParentElementWrapper = ParentElementWrapper;
@@ -913,10 +925,13 @@ ParentElementWrapper.prototype.getParentElement = function () {
  */
 ParentElementWrapper.prototype.setParentElement = function (parent) {
     var element = this.getElement();
+
     if (element.parentElement !== parent && this._parentElement !== parent) {
         this._parentElement = parent;
         this._parentElement.appendChild(element);
     }
+
+    return this;
 };
 
 exports.Serializer = Serializer;
