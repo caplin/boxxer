@@ -24,6 +24,13 @@ ViewContainer.prototype.render = function () {
 };
 
 /**
+ * destroys the ViewContainer and the contained Box
+ */
+ViewContainer.prototype.destroy = function () {
+    return this.box.destroy();
+};
+
+/**
  * serializes the ViewContainer
  * @returns {string}
  */
