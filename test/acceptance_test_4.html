@@ -31,19 +31,27 @@
     <script src="../build/boxxer.src.js"></script>
 
     <script>
-        window.onload = function () {
-            var stringLayout = "<bbox>" +
-                    "<bbox width='20%'></bbox>" +
-                    "<bbox flow='vertical'>" +
-                        "<bbox height='2'></bbox>" +
+        boxxer.Box.MIN_DIMENSION = 0;
+
+        var stringLayout = "<bbox>" +
+                "<bbox></bbox>" +
+                "<bbox flow='vertical'>" +
+                    "<bbox height='3'>" +
                         "<bbox></bbox>" +
+                        "<bbox></bbox>" +
+                        "<bbox width='3'></bbox>" +
                         "<bbox></bbox>" +
                         "<bbox></bbox>" +
                     "</bbox>" +
-                "</bbox>";
+                    "<bbox></bbox>" +
+                    "<bbox></bbox>" +
+                    "<bbox></bbox>" +
+                "</bbox>" +
+            "</bbox>";
 
-            var oHierarchy = boxxer.Serializer.deserialize(stringLayout);
+        var oHierarchy = boxxer.Serializer.deserialize(stringLayout);
 
+        window.onload = function () {
             oHierarchy.render();
 
             window.onresize = function () {
