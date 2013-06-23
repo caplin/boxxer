@@ -1194,7 +1194,7 @@ BoxRenderer.render = function (box, parent, flowDirection) {
         BoxRenderer._applyDecorators(box);
     }
 
-    BoxRenderer._postRender(box, view, element, flowDirection);
+    BoxRenderer._postRender(box, view, element);
 };
 
 /**
@@ -1222,14 +1222,13 @@ BoxRenderer._applyDecorators = function (box) {
  * @param box {Box}
  * @param view {ViewContainer}
  * @param element {HTMLElement}
- * @param flowDirection {String}
  */
-BoxRenderer._postRender = function (box, view, element, flowDirection) {
+BoxRenderer._postRender = function (box, view, element) {
     var viewContent;
     var tempElement;
 
     if (box.getChildCount()) {
-        this._renderChildren(box, element, flowDirection);
+        this._renderChildren(box, element, box.getFlowDirection());
     }
 
     //TODO: test this part because this has been implemented quickly!

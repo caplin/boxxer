@@ -38,9 +38,17 @@
         window.onload = function () {
             boxxer.Box.MIN_DIMENSION = 0;
 
-            var sSerialized = "<bbox flow='horizontal'>" +
+            var sSerialized = "<bbox>" +
                     "<bbox width='15%'></bbox>" +
-                    "<bbox height='250px'></bbox>" +
+                    "<bbox flow='vertical'>" +
+                        "<bbox></bbox>" +
+                        "<bbox>" +
+                            "<bbox></bbox>" +
+                            "<bbox></bbox>" +
+                            "<bbox></bbox>" +
+                        "</bbox>" +
+                        "<bbox></bbox>" +
+                    "</bbox>" +
                 "</bbox>";
 
             var oHierarchy = boxxer.Serializer.deserialize(sSerialized);
