@@ -63,6 +63,13 @@ window.onload = function () {
 Requires the back-end to be running. Currently use box id as file name but should support custom name soon
 so layout can be stored using the user email address or username.
 
+#### Running the back-end
+
+The back-end is very basic at the moment and use file to store the layout.
+From a command line tool go to server directory and run ```node index.js```.
+There is a demo running on http://localhost:666.
+
+
 ```javascript
 
 // store a layout
