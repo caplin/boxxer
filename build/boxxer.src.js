@@ -912,6 +912,8 @@ Serializer.toJSON = function (box, name) {
         "\"flow\":\"" + box.getFlowDirection() + "\"," +
         Serializer.getJSONAttributes(box);
 
+    name = name || box.getName() || null;
+
     if (typeof name === "string" && name !== "") {
         json += ",\"name\":\"" + name + "\"";
     }
