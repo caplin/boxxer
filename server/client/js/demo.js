@@ -1,5 +1,6 @@
 var tiles = [];
 var frame = new boxxer.Box("foo");
+frame.setName("myLayout");
 //frame.getLayout();
 
 var header = new boxxer.Box();

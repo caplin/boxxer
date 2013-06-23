@@ -107,7 +107,6 @@ handler.post = function(req, res) {
 
     // update a layout
     if (req.layoutRequest) {
-        console.log('post');
         fs.writeFile("layouts/" + req.layout, req.body, function (error) {
             if (error) {
                 console.log(error);
