@@ -184,17 +184,17 @@ Serializer.deserialize = function (serialized) {
  * @returns {boxxer.Box|undefined}
  */
 Serializer.buildHierarchy = function (hierarchy, format) {
-    var box;
+    var box = new Box();
     var childBox;
     var decorators;
     var child;
     var i;
 
     if (format === Serializer.JSON) {
-        box = new Box();
         box.setFlowDirection(hierarchy.flow);
         box.setWidth(hierarchy.width);
         box.setHeight(hierarchy.height);
+        box.addClass(hierarchy.class);
 
         if (hierarchy.decorators) {
             decorators = hierarchy.decorator.replace(" ", "").split(",");
@@ -211,11 +211,10 @@ Serializer.buildHierarchy = function (hierarchy, format) {
             }
         }
     } else if (format === Serializer.XML) {
-        box = new Box();
-
         box.setFlowDirection(hierarchy.getAttribute("flow"));
         box.setWidthDimension(hierarchy.getAttribute("width"));
         box.setHeightDimension(hierarchy.getAttribute("height"));
+        box.addClass(hierarchy.getAttribute("class"));
 
         if (hierarchy.getAttribute("decorators")) {
             decorators = hierarchy.getAttribute("decorators").replace(" ", "").split(",");
