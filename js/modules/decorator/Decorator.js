@@ -67,6 +67,11 @@ Decorator.extend = function (prototype) {
         }
     }
 
+    //initialize decorator once
+    if (typeof decorator.init === "function") {
+        decorator.init();
+    }
+
     return decorator;
 };
 
