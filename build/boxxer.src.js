@@ -1553,6 +1553,13 @@ ViewContainer.prototype.render = function () {
 };
 
 /**
+ * destroys the ViewContainer and the contained Box
+ */
+ViewContainer.prototype.destroy = function () {
+    return this.box.destroy();
+};
+
+/**
  * serializes the ViewContainer
  * @returns {string}
  */
@@ -1592,10 +1599,17 @@ exports.Dialog = Dialog;
  * @constructor Dialog
  */
 function Dialog(width, height, left, right) {
-    var element = document.createElement("div");
+    ElementWrapper.call(this);
+    Adjustable.call(this);
+
+    var element = this.getElement();
+    element.setAttribute("class", "boxxer-Dialog");
     element.style.position = "absolute";
 
-    this.element = element;
+    renderer.appendChild(element);
+    renderer.removeChild(element);
+
+    this.container = undefined;
     this.width = new Dimension(width);
     this.height = new Dimension(height);
     this.left = left || Dialog.CENTER;
@@ -1603,20 +1617,45 @@ function Dialog(width, height, left, right) {
     this.viewContainer = new ViewContainer(element);
 }
 
+mix(Dialog, ElementWrapper);
+mix(Dialog, Adjustable);
+
 /**
  * opens the Dialog
  * @return {Dialog}
  */
 Dialog.prototype.open = function () {
-    var body = getBody();
-    var element = this.element;
+    var element = this.getElement();
+    var container = this.container || getBody();
+    var availableWidth = container.offsetWidth;
+    var availableHeight = container.offsetHeight;
+    var width = this.width.calculate(availableWidth, 1);
+    var height = this.height.calculate(availableHeight, 1);
 
-    element.style.width = this.width.calculate(body.offsetWidth, 1);
-    element.style.height = this.height.calculate(body.offsetHeight, 1);
+    this.setWidth(width);
+    this.setHeight(height);
+
+    element.style.left = ((availableWidth / 2) - (width / 2)) + "px";
+    element.style.top = ((availableHeight / 2) - (height / 2)) + "px";
 
     this.renderViewContent(element);
 
-    body.appendChild(element);
+    container.appendChild(element);
+
+    return this;
+};
+
+/**
+ * sets the container of the Dialog instance
+ * @param container {Box|HTMLElement}
+ * @returns {Dialog}
+ */
+Dialog.prototype.setContainer = function (container) {
+    if (!(container instanceof Box || container instanceof HTMLElement)) {
+        throw new TypeError("Container must be a Box or a HTMLElement instance!");
+    }
+
+    this.container = container;
 
     return this;
 };
@@ -1645,7 +1684,7 @@ Dialog.prototype.renderViewContent = function (element) {
  * closes the dialog and destroys the Box
  */
 Dialog.prototype.close = function () {
-    this.box.destroy();
+    this.viewContainer.destroy();
     removeElement(this.getElement());
 };
 
