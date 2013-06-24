@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boxxer - Acceptance Test</title>
+
+    <link rel="stylesheet" href="../css/global.css">
+
+    <style>
+        div {
+            background: #aaa;
+        }
+
+        div div {
+            background: #bbb;
+        }
+
+        div div div {
+            background: #ccc;
+        }
+
+        div div div div {
+            background: #ddd;
+        }
+
+        div:hover {
+            background: rgba(0, 255, 0, 0.25);
+        }
+    </style>
+
+    <script src="../lib/es5-shim.js"></script>
+    <script src="../build/boxxer.src.js"></script>
+
+    <script>
+        boxxer.Box.MIN_DIMENSION = 0;
+
+        var stringLayout = "<bbox>" +
+                "<bbox></bbox>" +
+                "<bbox flow='vertical'>" +
+                    "<bbox height='3'>" +
+                        "<bbox></bbox>" +
+                        "<bbox></bbox>" +
+                        "<bbox width='3'></bbox>" +
+                        "<bbox></bbox>" +
+                        "<bbox></bbox>" +
+                    "</bbox>" +
+                    "<bbox></bbox>" +
+                    "<bbox></bbox>" +
+                    "<bbox></bbox>" +
+                "</bbox>" +
+            "</bbox>";
+
+        var oHierarchy = boxxer.Serializer.deserialize(stringLayout);
+
+        window.onload = function () {
+            oHierarchy.render();
+
+            window.onresize = function () {
+                oHierarchy.render();
+            };
+        }
+    </script>
+</head>
+<body></body>
+</html>

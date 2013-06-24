@@ -11,6 +11,7 @@ function Box(width, height, parent) {
     ElementWrapper.call(this);
     ParentElementWrapper.call(this, parent);
     EventEmitter.call(this);
+    BoxComponent.call(this);
 
     /**
      * id of the Box
@@ -85,6 +86,7 @@ mix(Box, ParentElementWrapper);
 mix(Box, Layout);
 mix(Box, Serializer);
 mix(Box, EventEmitter);
+mix(Box, BoxComponent);
 
 /**
  * adds the decorator specified to the Box instance
@@ -253,6 +255,7 @@ Box.prototype.render = function () {
     }
 
     BoxRenderer.render(this, parent, flowDirection);
+    BoxComponent.render(this);
 
     //TODO: trigger events regarding whether the Box has already been rendered (render/change)
     if (this.isRendered) {

@@ -591,10 +591,6 @@ exports.Layout = Layout;
 
 function Layout() {}
 
-Layout.prototype.getLayoutPath = function() {
-    return this.getName() || this.getId();
-};
-
 Layout.prototype.getLayout = function() {
     var callback = function(rawData) {
         var data = JSON.parse(rawData.responseText);
@@ -604,7 +600,7 @@ Layout.prototype.getLayout = function() {
         this.addBox(box);
     }.bind(this);
 
-    new Connection(Layout.URL + "/" + this.getLayoutPath(), {
+    new Connection(Layout.URL + "/" + this.getId(), {
         callback: callback
     }).get();
 };
@@ -612,13 +608,13 @@ Layout.prototype.getLayout = function() {
 Layout.prototype.saveLayout = function(name) {
     var layout = this.serialize(Serializer.JSON, name || null);
 
-    new Connection(Layout.URL + "/" + this.getLayoutPath(), {
+    new Connection(Layout.URL + "/" + this.getId(), {
         data: layout
     }).save();
 };
 
 Layout.prototype.deleteLayout = function() {
-    new Connection(Layout.URL + this.getLayoutPath()).remove();
+    new Connection(Layout.URL + this.getId()).remove();
 };
 
 // Layout.URL = "http://localhost:666/layout";
@@ -689,6 +685,81 @@ Adjustable.prototype.setHeight = function (height) {
 Adjustable.prototype.setDimensions = function (width, height) {
     this.setWidth(width);
     this.setHeight(height);
+};
+
+exports.BoxComponent = BoxComponent;
+
+/**
+ * Component adapter class to provide ComponentLifeCycleEvents for the Component inside the Box
+ * @param component {caplin.component.Component|undefined}
+ * @constructor BoxComponent
+ */
+function BoxComponent(component) {
+    /**
+     * @type {caplin.component.Component|undefined}
+     */
+    this.component = component;
+}
+
+/**
+ * sets the component on the Box instance
+ * @param component {caplin.component.Component}
+ * @returns {Box}
+ */
+BoxComponent.prototype.setComponent = function (component) {
+    if (component) {
+        this.component = component;
+    }
+
+    return this;
+};
+
+/**
+ * returns the Component
+ * @returns {caplin.component.Component}
+ */
+BoxComponent.prototype.getComponent = function () {
+    return this.component;
+};
+
+/**
+ * invokes onOpen or onResize for the Component inside the Box
+ * instance depending whether the Box has been rendered or not.
+ * @param box {Box}
+ * @returns {Box}
+ */
+BoxComponent.render = function (box) {
+    var component = box.getComponent();
+    var element;
+
+    if (component) {
+        element = box.getElement();
+
+        //trigger open if not rendered
+        if (!box.isRendered) {
+            component.onOpen(element.offsetWidth, element.offsetHeight);
+        } else {
+            //trigger resize
+            component.onResize(element.offsetWidth, element.offsetHeight);
+        }
+    }
+
+    return this;
+};
+
+/**
+ * invokes onClose for the Component inside the Box instance
+ * @param box {Box}
+ * @returns {Box}
+ */
+BoxComponent.destroy = function (box) {
+    var component = box.getComponent();
+
+    if (component) {
+        component.onClose();
+    }
+
+    return box;
 };
 
 exports.ElementWrapper = ElementWrapper;
@@ -769,8 +840,10 @@ ElementWrapper.prototype.getAttribute = function (attribute) {
  * sets an attribute of the DOM Element of the Box
  */
 ElementWrapper.prototype.setAttribute = function (attribute, value) {
-    this.getElement()
-        .setAttribute(attribute, (value || "").toString());
+    if (value) {
+        this.getElement()
+            .setAttribute(attribute, value.toString());
+    }
 
     return this;
 };
@@ -790,8 +863,10 @@ ElementWrapper.prototype.getDataAttribute = function (attribute) {
  * @param value {*} any serializable Object (implements or overrides toString() )
  */
 ElementWrapper.prototype.setDataAttribute = function (attribute, value) {
-    this.getElement()
-        .setAttribute("data-" + attribute, value);
+    if (value) {
+        this.getElement()
+            .setAttribute("data-" + attribute, value);
+    }
 
     return this;
 };
@@ -911,8 +986,6 @@ Serializer.toJSON = function (box, name) {
         "\"id\":" + Number(box.getId().replace("bbox_", "")) + "," +
         "\"flow\":\"" + box.getFlowDirection() + "\"," +
         Serializer.getJSONAttributes(box);
-
-    name = name || box.getName() || null;
 
     if (typeof name === "string" && name !== "") {
         json += ",\"name\":\"" + name + "\"";
@@ -1083,6 +1156,7 @@ Serializer.buildHierarchy = function (hierarchy, format) {
             }
         }
     } else if (format === Serializer.XML) {
+
         box.setFlowDirection(hierarchy.getAttribute("flow"));
         box.setWidthDimension(hierarchy.getAttribute("width"));
         box.setHeightDimension(hierarchy.getAttribute("height"));
@@ -1559,13 +1633,6 @@ ViewContainer.prototype.render = function () {
 };
 
 /**
- * destroys the ViewContainer and the contained Box
- */
-ViewContainer.prototype.destroy = function () {
-    return this.box.destroy();
-};
-
-/**
  * serializes the ViewContainer
  * @returns {string}
  */
@@ -1605,17 +1672,10 @@ exports.Dialog = Dialog;
  * @constructor Dialog
  */
 function Dialog(width, height, left, right) {
-    ElementWrapper.call(this);
-    Adjustable.call(this);
-
-    var element = this.getElement();
-    element.setAttribute("class", "boxxer-Dialog");
+    var element = document.createElement("div");
     element.style.position = "absolute";
 
-    renderer.appendChild(element);
-    renderer.removeChild(element);
-
-    this.container = undefined;
+    this.element = element;
     this.width = new Dimension(width);
     this.height = new Dimension(height);
     this.left = left || Dialog.CENTER;
@@ -1623,45 +1683,20 @@ function Dialog(width, height, left, right) {
     this.viewContainer = new ViewContainer(element);
 }
 
-mix(Dialog, ElementWrapper);
-mix(Dialog, Adjustable);
-
 /**
  * opens the Dialog
  * @return {Dialog}
  */
 Dialog.prototype.open = function () {
-    var element = this.getElement();
-    var container = this.container || getBody();
-    var availableWidth = container.offsetWidth;
-    var availableHeight = container.offsetHeight;
-    var width = this.width.calculate(availableWidth, 1);
-    var height = this.height.calculate(availableHeight, 1);
+    var body = getBody();
+    var element = this.element;
 
-    this.setWidth(width);
-    this.setHeight(height);
-
-    element.style.left = ((availableWidth / 2) - (width / 2)) + "px";
-    element.style.top = ((availableHeight / 2) - (height / 2)) + "px";
+    element.style.width = this.width.calculate(body.offsetWidth, 1);
+    element.style.height = this.height.calculate(body.offsetHeight, 1);
 
     this.renderViewContent(element);
 
-    container.appendChild(element);
-
-    return this;
-};
-
-/**
- * sets the container of the Dialog instance
- * @param container {Box|HTMLElement}
- * @returns {Dialog}
- */
-Dialog.prototype.setContainer = function (container) {
-    if (!(container instanceof Box || container instanceof HTMLElement)) {
-        throw new TypeError("Container must be a Box or a HTMLElement instance!");
-    }
-
-    this.container = container;
+    body.appendChild(element);
 
     return this;
 };
@@ -1690,7 +1725,7 @@ Dialog.prototype.renderViewContent = function (element) {
  * closes the dialog and destroys the Box
  */
 Dialog.prototype.close = function () {
-    this.viewContainer.destroy();
+    this.box.destroy();
     removeElement(this.getElement());
 };
 
@@ -1713,6 +1748,7 @@ function Box(width, height, parent) {
     ElementWrapper.call(this);
     ParentElementWrapper.call(this, parent);
     EventEmitter.call(this);
+    BoxComponent.call(this);
 
     /**
      * id of the Box
@@ -1787,6 +1823,7 @@ mix(Box, ParentElementWrapper);
 mix(Box, Layout);
 mix(Box, Serializer);
 mix(Box, EventEmitter);
+mix(Box, BoxComponent);
 
 /**
  * adds the decorator specified to the Box instance
@@ -1955,6 +1992,7 @@ Box.prototype.render = function () {
     }
 
     BoxRenderer.render(this, parent, flowDirection);
+    BoxComponent.render(this);
 
     //TODO: trigger events regarding whether the Box has already been rendered (render/change)
     if (this.isRendered) {
@@ -2093,9 +2131,7 @@ api.createBox = function createBox(setup) {
         (setup.parent || setup.container)
     );
 
-    box.setFlowDirection(flow);
-
-    return box;
+    return box.setFlowDirection(flow).setComponent(setup.component);
 };
 /**
  * @param setup {Object} map of settings

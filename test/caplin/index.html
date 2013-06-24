@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+
+        <style>
+            html, body, #component-container{
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+
+        <script src="../../build/boxxer.src.js"></script>
+
+        <script>
+            var layout = "<bbox flow='horizontal'>" +
+                        "<bbox name='component-holder'></bbox>" +
+                        "<bbox></bbox>" +
+                    "</bbox>";
+
+            layout = boxxer.Serializer.deserialize(layout);
+
+            layout
+                .getChild('component-holder')
+                .setComponent({
+                    onOpen: function (width, height) {
+                        console.log("Component open " + width + "x" + height);
+                    },
+                    onClose: function () {
+                        console.log("Component close");
+                    },
+                    onResize: function (width, height) {
+                        console.log("Component resize " + width + "x" + height);
+                    }
+                });
+
+            window.onload = function () {
+                var parent = document.getElementById("component-container");
+
+                layout.setParentElement(parent).render();
+            };
+
+            window.onresize = function () {
+                layout.render();
+            };
+        </script>
+    </head>
+    <body>
+        <div id="component-container"></div>
+    </body>
+</html>

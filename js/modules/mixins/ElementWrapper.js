@@ -76,8 +76,10 @@ ElementWrapper.prototype.getAttribute = function (attribute) {
  * sets an attribute of the DOM Element of the Box
  */
 ElementWrapper.prototype.setAttribute = function (attribute, value) {
-    this.getElement()
-        .setAttribute(attribute, (value || "").toString());
+    if (value) {
+        this.getElement()
+            .setAttribute(attribute, value.toString());
+    }
 
     return this;
 };
@@ -97,8 +99,10 @@ ElementWrapper.prototype.getDataAttribute = function (attribute) {
  * @param value {*} any serializable Object (implements or overrides toString() )
  */
 ElementWrapper.prototype.setDataAttribute = function (attribute, value) {
-    this.getElement()
-        .setAttribute("data-" + attribute, value);
+    if (value) {
+        this.getElement()
+            .setAttribute("data-" + attribute, value);
+    }
 
     return this;
 };

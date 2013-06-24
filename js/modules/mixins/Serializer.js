@@ -193,6 +193,7 @@ Serializer.buildHierarchy = function (hierarchy, format) {
     var i;
 
     if (format === Serializer.JSON) {
+        box = new Box();
         box.setFlowDirection(hierarchy.flow);
         box.setWidth(hierarchy.width);
         box.setHeight(hierarchy.height);
