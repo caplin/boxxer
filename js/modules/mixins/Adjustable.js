@@ -1,7 +1,9 @@
 exports.Adjustable = Adjustable;
 
 /**
- * @constructor Adjustable mixin class provides the required dimension handler methods
+ * Adjustable mixin class provides the required dimension handler methods
+ * @name Adjustable
+ * @constructor
  */
 function Adjustable() {}
 

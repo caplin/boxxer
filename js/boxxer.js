@@ -8,6 +8,7 @@ var exports = {};
 /**
  * boxxer API object
  * @type {Object}
+ * @namespace
  */
 var api = Object.create(exports);
 

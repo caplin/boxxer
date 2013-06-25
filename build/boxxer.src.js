@@ -10,6 +10,7 @@ var exports = {};
 /**
  * boxxer API object
  * @type {Object}
+ * @namespace
  */
 var api = Object.create(exports);
 
@@ -151,11 +152,11 @@ exports.utils = {
 
 //expose initialize function
 exports.init = init;
-
 exports.Async = Async;
 
 /**
- * @constructor provides save mixin method for Box instances for asynchronous state saving
+ * provides save mixin method for Box instances for asynchronous state saving
+ * @constructor Async
  */
 function Async() {}
 
@@ -472,7 +473,8 @@ BoxEvent._id = 0;
 exports.EventEmitter = EventEmitter;
 
 /**
- * @constructor EventEmitter instances are able to register and emit events
+ * EventEmitter instances are able to register and emit events
+ * @constructor EventEmitter
  */
 function EventEmitter() {
     /**
@@ -589,12 +591,23 @@ EventEmitter.ON_UPDATE = "update";
 
 exports.Layout = Layout;
 
+/**
+ * Abstract class that extend box instance and provide layout persistence
+ * @constructor Layout
+ */
 function Layout() {}
 
+/**
+ * Return the path for the layout
+ * @returns {*}
+ */
 Layout.prototype.getLayoutPath = function() {
     return this.getName() || this.getId();
 };
 
+/**
+ * Retrieve a layout from the back-end
+ */
 Layout.prototype.getLayout = function() {
     var callback = function(rawData) {
         var data = JSON.parse(rawData.responseText);
@@ -609,6 +622,10 @@ Layout.prototype.getLayout = function() {
     }).get();
 };
 
+/**
+ * Save a layout in the back-end
+ * @param name
+ */
 Layout.prototype.saveLayout = function(name) {
     var layout = this.serialize(Serializer.JSON, name || null);
 
@@ -617,37 +634,33 @@ Layout.prototype.saveLayout = function(name) {
     }).save();
 };
 
+/**
+ * Delete a layout from the back-end
+ */
 Layout.prototype.deleteLayout = function() {
     new Connection(Layout.URL + this.getLayoutPath()).remove();
 };
 
-// Layout.URL = "http://localhost:666/layout";
+/**
+ * Path to the layouts API
+ * @type {string}
+ */
 Layout.URL = window.location.href + "/layout";
 
 exports.Manager = Manager;
 
+/**
+ * Seperate class which aim to facilitate managing multiple layouts
+ * @constructor
+ */
 function Manager() {}
-
-/**
- * fetches the specified layout from the server via the REST API
- */
-Manager.prototype.getLayouts = function() {
-    new Connection(Layout.URL + "/" + this.getId(), {
-        data: layout
-    }).save();
-};
-
-/**
- * @static
- * @constant
- * @type {string}
- */
-Manager.URL = "/layouts";
 
 exports.Adjustable = Adjustable;
 
 /**
- * @constructor Adjustable mixin class provides the required dimension handler methods
+ * Adjustable mixin class provides the required dimension handler methods
+ * @name Adjustable
+ * @constructor
  */
 function Adjustable() {}
 
@@ -694,6 +707,7 @@ Adjustable.prototype.setDimensions = function (width, height) {
 exports.BoxComponent = BoxComponent;
 
 /**
+ * @name BoxComponent
  * Component adapter class to provide ComponentLifeCycleEvents for the Component inside the Box
  * @param component {caplin.component.Component|undefined}
  * @constructor BoxComponent
@@ -769,7 +783,8 @@ BoxComponent.destroy = function (box) {
 exports.ElementWrapper = ElementWrapper;
 
 /**
- * @constructor ElementWrapper
+ * @name ElementWrapper
+ * @constructor
  */
 function ElementWrapper() {
     /**
@@ -912,7 +927,8 @@ ElementWrapper.prototype.html = function (html) {
 exports.ParentElementWrapper = ParentElementWrapper;
 
 /**
- * @constructor ParentElementWrapper
+ * @name ParentElementWrapper
+ * @constructor
  * @param parent {HTMLElement}
  */
 function ParentElementWrapper(parent) {
@@ -950,7 +966,8 @@ ParentElementWrapper.prototype.setParentElement = function (parent) {
 exports.Serializer = Serializer;
 
 /**
- * @constructor provides serializer method for each Box instance to serialize their state
+ * Provides serializer method for each Box instance to serialize their state
+ * @constructor Serializer
  * @mixin
  * @static
  */
@@ -1208,8 +1225,9 @@ function Data() {
 exports.BoxRenderer = BoxRenderer;
 
 /**
+ * This class is responsible for rendering a Box instance and its child Box instances recursively
  * @static
- * @constructor this class is responsible for rendering a Box instance and its child Box instances recursively
+ * @constructor BoxRenderer
  */
 function BoxRenderer() {}
 
@@ -1452,14 +1470,14 @@ exports.Dimension = Dimension;
 
 /**
  * @param arg
- * @constructor Dimension class is used and responsible for
- * managing the rendered width or height of a Box instance.
+ * class is used and responsible for managing the rendered width or height of a Box instance.
  *
  * Each Box instance should have a width and a height
  * Dimension instance which will calculate its own pixel/percent/weight
  * values during the rendering process
  *
  * Every sizing calculation and info should be stored here instead of the Box class!
+ * @constructor Dimension
  */
 function Dimension(arg) {
     var parsed = this._parse(arg);
@@ -1783,7 +1801,8 @@ Dialog.CENTER = "center";
 exports.Box = Box;
 
 /**
- * @constructor Abstract class that provides the basic attributes for each Box instance
+ * Abstract class that provides the basic attributes for each Box instance
+ * @constructor Box
  * @param width {String|Number}
  * @param height {String|Number}
  * @param parent {HTMLElement|undefined}

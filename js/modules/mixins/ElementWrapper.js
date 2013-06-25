@@ -1,7 +1,8 @@
 exports.ElementWrapper = ElementWrapper;
 
 /**
- * @constructor ElementWrapper
+ * @name ElementWrapper
+ * @constructor
  */
 function ElementWrapper() {
     /**

@@ -1,7 +1,8 @@
 exports.Async = Async;
 
 /**
- * @constructor provides save mixin method for Box instances for asynchronous state saving
+ * provides save mixin method for Box instances for asynchronous state saving
+ * @constructor Async
  */
 function Async() {}
 

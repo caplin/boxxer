@@ -1,7 +1,8 @@
 exports.EventEmitter = EventEmitter;
 
 /**
- * @constructor EventEmitter instances are able to register and emit events
+ * EventEmitter instances are able to register and emit events
+ * @constructor EventEmitter
  */
 function EventEmitter() {
     /**

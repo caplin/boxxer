@@ -1,8 +1,9 @@
 exports.BoxRenderer = BoxRenderer;
 
 /**
+ * This class is responsible for rendering a Box instance and its child Box instances recursively
  * @static
- * @constructor this class is responsible for rendering a Box instance and its child Box instances recursively
+ * @constructor BoxRenderer
  */
 function BoxRenderer() {}
 

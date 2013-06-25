@@ -2,14 +2,14 @@ exports.Dimension = Dimension;
 
 /**
  * @param arg
- * @constructor Dimension class is used and responsible for
- * managing the rendered width or height of a Box instance.
+ * class is used and responsible for managing the rendered width or height of a Box instance.
  *
  * Each Box instance should have a width and a height
  * Dimension instance which will calculate its own pixel/percent/weight
  * values during the rendering process
  *
  * Every sizing calculation and info should be stored here instead of the Box class!
+ * @constructor Dimension
  */
 function Dimension(arg) {
     var parsed = this._parse(arg);

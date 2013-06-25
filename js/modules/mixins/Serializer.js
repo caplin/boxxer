@@ -1,7 +1,8 @@
 exports.Serializer = Serializer;
 
 /**
- * @constructor provides serializer method for each Box instance to serialize their state
+ * Provides serializer method for each Box instance to serialize their state
+ * @constructor Serializer
  * @mixin
  * @static
  */

@@ -60,8 +60,8 @@ window.onload = function () {
 
 ### Layout persistence
 
-Requires the back-end to be running. Currently use box id as file name but should support custom name soon
-so layout can be stored using the user email address or username.
+Requires the back-end to be running. If the box has a custom name set the name will be used in serialization and will
+be used to store the file. The layout can then be retrieve by creating a box, giving it a name and call getLayout().
 
 #### Running the back-end
 
@@ -69,13 +69,37 @@ The back-end is very basic at the moment and use file to store the layout.
 From a command line tool go to server directory and run ```node index.js```.
 There is a demo running on http://localhost:666.
 
+Store a layout
 
 ```javascript
 
-// store a layout
+// create a box
+var frame = new boxxerBox();
+
+// name it
+frame.setName("myLayout");
+
+// code to create the layout here...
+
+// store the layout
 frame.saveLayout();
 
 // retrieve a layout
+frame.getLayout();
+
+```
+
+Retrieve a layout
+
+```javascript
+
+// create a box
+var frame = new boxxerBox();
+
+// name it
+frame.setName("myLayout");
+
+// retrieve its layout
 frame.getLayout();
 
 ```

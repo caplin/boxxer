@@ -1,7 +1,8 @@
 exports.Box = Box;
 
 /**
- * @constructor Abstract class that provides the basic attributes for each Box instance
+ * Abstract class that provides the basic attributes for each Box instance
+ * @constructor Box
  * @param width {String|Number}
  * @param height {String|Number}
  * @param parent {HTMLElement|undefined}

@@ -56,14 +56,22 @@ module.exports = function(grunt) {
             }
         },
 
-        //watch
         watch: {
             scripts: {
                 files: ['js/**/*.js', 'js_patches/**/*.js'],
                 tasks: ['concat']
             }
-        }
+        },
 
+        jsdoc: {
+            dist: {
+                src: sources,
+                options: {
+                    destination: 'documentation',
+                    lenient: true
+                }
+            }
+        }
     });
 
     // Load the plugins
@@ -72,8 +80,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
     // Default task(s).
     grunt.registerTask('default', ['concat', 'uglify', 'qunit']);
+    grunt.registerTask('doc', ['concat', 'jsdoc']);
     grunt.registerTask('deploy', ['concat', 'uglify', 'qunit', 'copy']);
 };

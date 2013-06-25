@@ -1,6 +1,7 @@
 exports.BoxComponent = BoxComponent;
 
 /**
+ * @name BoxComponent
  * Component adapter class to provide ComponentLifeCycleEvents for the Component inside the Box
  * @param component {caplin.component.Component|undefined}
  * @constructor BoxComponent

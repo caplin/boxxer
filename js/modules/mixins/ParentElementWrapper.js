@@ -1,7 +1,8 @@
 exports.ParentElementWrapper = ParentElementWrapper;
 
 /**
- * @constructor ParentElementWrapper
+ * @name ParentElementWrapper
+ * @constructor
  * @param parent {HTMLElement}
  */
 function ParentElementWrapper(parent) {
