@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: boxxer.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: boxxer.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>var global = this;
+/**
+ * boxxer object
+ * @type {Object}
+ */
+var exports = {};
+
+/**
+ * boxxer API object
+ * @type {Object}
+ * @namespace
+ */
+var api = Object.create(exports);
+
+/**
+ * old boxxer
+ * @type {Object}
+ */
+var _boxxer = global.boxxer;
+
+/**
+ * renderer element
+ * @type {HTMLElement}
+ */
+var renderer = document.createElement("div");
+//hide the renderer element to prevent unnecessary reflows
+renderer.style.display = "none";
+
+if (_boxxer) {
+    exports._boxxer = _boxxer;
+}
+
+//export API object
+global.boxxer = api;
+
+/**
+ * descendant class level constructor
+ * @constructor Surrogate
+ */
+function Surrogate() {}
+
+/**
+ * determines whether boxxer should be built in debug mode
+ * @return {Boolean}
+ */
+function debugMode() {
+    return (global.boxxer_debug === true);
+}
+
+/**
+ * removes an element from its parent element
+ * @param element {HTMLElement}
+ */
+function removeElement(element) {
+    var parent = element.parentNode;
+
+    if (parent) {
+        parent.removeChild(element);
+    }
+}
+
+/**
+ * returns the browser specific target Element in an Event object
+ * @param evt {Event}
+ * @returns {Object}
+ */
+function getEventTarget(evt) {
+    return (evt.target || evt.srcElement);
+}
+
+/**
+ * returns the document body
+ * @private
+ * @static
+ * @return {HTMLElement}
+ */
+function getBody() {
+    return document.body;
+}
+
+/**
+ * initializes a renderer element by appending it to the DOM and hiding it
+ * @param eElement {HTMLElement|undefined} parent to append the renderer element to
+ */
+function init(eElement) {
+    //appending invisible renderer element
+    (eElement || getBody()).appendChild(renderer);
+}
+
+/**
+ * returns the renderer element
+ * @returns {HTMLElement}
+ */
+function getRenderer() {
+    return renderer;
+}
+
+/**
+ * extender - inheritance resolver
+ * @param subClass {Function} sub class - surprised on this?
+ * @param superClass {Function} super class - the Force is strong with this one...
+ */
+function inherit(subClass, superClass) {
+    var TemporarySuperClass = function () {};
+
+    if (debugMode()) {
+        //I know, but I still prefer the
+        //clean visual prototype chain
+        //with proper class names instead
+        //of "__proto__ > haku.nama.tata"
+        eval("TemporarySuperClass = function " + subClass.name + "() {};");
+    }
+
+    TemporarySuperClass.prototype = superClass.prototype;
+
+    subClass.prototype = new TemporarySuperClass();
+    subClass.prototype.constructor = subClass;
+}
+
+/**
+ * mixes two classes by their prototype
+ * @param mainClass {Function} class getting partial stuff
+ * @param mixClass {Function} partial class implementation
+ */
+function mix(mainClass, mixClass) {
+    var i;
+
+    for (i in mixClass.prototype) {
+        if (mixClass.prototype.hasOwnProperty(i)) {
+            mainClass.prototype[i] = mixClass.prototype[i];
+        }
+    }
+}
+
+//expose registering method
+exports.Surrogate = Surrogate;
+
+//expose core utility functions
+exports.mix = mix;
+exports.inherit = inherit;
+exports.debugMode = debugMode;
+
+//expose utility functions
+exports.utils = {
+    getBody : getBody,
+    getRenderer : getRenderer,
+    getEventTarget : getEventTarget,
+    removeElement: removeElement
+};
+
+//expose initialize function
+exports.init = init;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Adjustable.html">Adjustable</a></li><li><a href="Async.html">Async</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxComponent.html">BoxComponent</a></li><li><a href="BoxEvent.html">BoxEvent</a></li><li><a href="BoxRenderer.html">BoxRenderer</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Decorator.html">Decorator</a></li><li><a href="Dialog.html">Dialog</a></li><li><a href="Dimension.html">Dimension</a></li><li><a href="ElementWrapper.html">ElementWrapper</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Layout.html">Layout</a></li><li><a href="Manager.html">Manager</a></li><li><a href="ParentElementWrapper.html">ParentElementWrapper</a></li><li><a href="Surrogate.html">Surrogate</a></li><li><a href="ViewContainer.html">ViewContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="api.html">api</a></li></ul><h3>Mixins</h3><ul><li><a href="Serializer.html">Serializer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_boxxer">_boxxer</a></li><li><a href="global.html#_children">_children</a></li><li><a href="global.html#_decorators">_decorators</a></li><li><a href="global.html#_element">_element</a></li><li><a href="global.html#_eventTypes">_eventTypes</a></li><li><a href="global.html#_flowDirection">_flowDirection</a></li><li><a href="global.html#_id">_id</a></li><li><a href="global.html#_minValue">_minValue</a></li><li><a href="global.html#_mutedTypes">_mutedTypes</a></li><li><a href="global.html#_name">_name</a></li><li><a href="global.html#_parentElement">_parentElement</a></li><li><a href="global.html#_type">_type</a></li><li><a href="global.html#_value">_value</a></li><li><a href="global.html#component">component</a></li><li><a href="global.html#debugMode">debugMode</a></li><li><a href="global.html#getBody">getBody</a></li><li><a href="global.html#getEventTarget">getEventTarget</a></li><li><a href="global.html#getRenderer">getRenderer</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#inherit">inherit</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRendered">isRendered</a></li><li><a href="global.html#mix">mix</a></li><li><a href="global.html#removeElement">removeElement</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#">undefined</a></li><li><a href="global.html#view">view</a></li><li><a href="global.html#width">width</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Jun 25 2013 08:28:23 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

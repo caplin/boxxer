@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Box.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: Box.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>exports.Box = Box;
+
+/**
+ * Abstract class that provides the basic attributes for each Box instance
+ * @constructor Box
+ * @param width {String|Number}
+ * @param height {String|Number}
+ * @param parent {HTMLElement|undefined}
+ */
+function Box(width, height, parent) {
+    //mixin constructors
+    ElementWrapper.call(this);
+    ParentElementWrapper.call(this, parent);
+    EventEmitter.call(this);
+    BoxComponent.call(this);
+
+    /**
+     * id of the Box
+     * @private
+     * @type {Object}
+     */
+    this._id = Box.generateUniqueBoxId();
+
+    /**
+     * Optional custom name  for the box. Use the setter if you wish to use one.
+     * @type {null}
+     * @private
+     */
+    this._name = null;
+
+    /**
+     * @private
+     * @type {Object}
+     */
+    this._children = {};
+
+    /**
+     * property for boxxer.view.View instance to serialize
+     * @type {boxxer.view.ViewContainer|undefined}
+     */
+    this.view = undefined;
+
+    /**
+     * width of the Box
+     * @type {b.render.Dimension}
+     */
+    this.width = new Dimension(width);
+
+    /**
+     * height of the Box
+     * @type {b.render.Dimension}
+     */
+    this.height = new Dimension(height);
+
+    /**
+     * array of decorator names to apply after rendering
+     * @private
+     * @type {Array}
+     */
+    this._decorators = [];
+
+    /**
+     * the direction inside the Box
+     * @private
+     * @type {Object}
+     */
+    this._flowDirection = Box.FLOW_VERTICAL;
+
+    /**
+     * @private
+     * @type {Boolean}
+     */
+    this.isRendered = false;
+
+    //initialize Box
+    this.addClass("boxxer-Box");
+    this.setDataAttribute("box-id", this.getId());
+
+    //registering Box
+    Box._registry[this.getId()] = this;
+}
+
+mix(Box, Adjustable);
+mix(Box, ElementWrapper);
+mix(Box, ParentElementWrapper);
+
+mix(Box, Layout);
+mix(Box, Serializer);
+mix(Box, EventEmitter);
+mix(Box, BoxComponent);
+
+/**
+ * adds the decorator specified to the Box instance
+ * @param decoratorName {String}
+ * @returns {Box}
+ */
+Box.prototype.addDecorator = function (decoratorName) {
+    this._decorators.push(decoratorName);
+    return this;
+};
+
+/**
+ * returns the decorators registered for the Box instance
+ * @returns {Array}
+ */
+Box.prototype.getDecorators = function () {
+    return this._decorators;
+};
+
+/**
+ * return the flow direction of the box
+ * @returns {Object}
+ */
+Box.prototype.getFlowDirection = function () {
+    return this._flowDirection;
+};
+
+/**
+ * Set the flow direction for the box
+ * @param flowDirection {String}
+ */
+Box.prototype.setFlowDirection = function (flowDirection) {
+    this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    return this;
+};
+
+/**
+ * creates a new Dimension for width property
+ * @param value {string|Number}
+ */
+Box.prototype.setWidthDimension = function (value) {
+    this.width = new Dimension(value);
+    return this;
+};
+
+/**
+ * creates a new Dimension for width property
+ * @param value {string|Number}
+ */
+Box.prototype.setHeightDimension = function (value) {
+    this.height = new Dimension(value);
+    return this;
+};
+
+/**
+ * adds a new child to the current box instance
+ * @param width {Number|String} width argument
+ * @param height {Number|String} width argument
+ * @param name {String} name of the new instance in the collection
+ * @returns {Box}
+ */
+Box.prototype.addChild = function (width, height, name) {
+    var box = new Box(width, height, this.getElement());
+    this.addBox(box, name);
+    return this;
+};
+
+/**
+ * adds the given Box to the children
+ * @param name {String} the child's name
+ * @param box {Box} the child Box
+ * @return {Box}
+ */
+Box.prototype.addBox = function (box, name) {
+    if (!(box instanceof Box)) {
+        throw new TypeError("Argument is not a Box!");
+    }
+
+    box.setParentElement(this.getElement());
+
+    this.getChildren()[name || box.getId()] = box;
+
+    return this;
+};
+
+/**
+ * Get the box custom name. Returns null if name was set.
+ * @returns {null|String}
+ */
+Box.prototype.getName = function() {
+    return this._name;
+};
+
+/**
+ * Set a custom name for the Box and register it.
+ * @param name {String}
+ */
+Box.prototype.setName = function(name) {
+    if (Box._nameRegistry[name]) {
+        throw "Box name already exists: " + name;
+    }
+
+    this._name = name;
+
+    Box._nameRegistry[name] = this.getId();
+
+    return this;
+};
+
+/**
+ * returns the Box name
+ * @return {String}
+ */
+Box.prototype.getId = function () {
+    return this._id;
+};
+
+/**
+ * returns a child from the BoxSet
+ * @param name {String} the name of the child
+ * @return {Box}
+ */
+Box.prototype.getChild = function (name) {
+    return this.getChildren()[name];
+};
+
+/**
+ * returns the children
+ * @return {Object}
+ */
+Box.prototype.getChildren = function () {
+    return this._children;
+};
+
+/**
+ * returns the number of children the Box has
+ * @return {Number}
+ */
+Box.prototype.getChildCount = function () {
+    return Object.keys(this.getChildren()).length;
+};
+
+/**
+ * removes a child Box
+ * @param name {String} the name of the child
+ */
+Box.prototype.removeChild = function (name) {
+    var children = this.getChildren();
+    children[name].close();
+    delete children[name];
+    return this;
+};
+
+/**
+ * Render the box and its children to the document
+ */
+Box.prototype.render = function () {
+    var parent = this.getParentElement();
+    var boxId = parent.getAttribute("data-box-id");
+    var parentBox = Box.getById(boxId);
+    var eventType = EventEmitter.ON_RENDER;
+    var flowDirection;
+
+    if (parentBox instanceof Box) {
+        flowDirection = parentBox.getFlowDirection();
+    }
+
+    BoxRenderer.render(this, parent, flowDirection);
+    BoxComponent.render(this);
+
+    //TODO: trigger events regarding whether the Box has already been rendered (render/change)
+    if (this.isRendered) {
+        eventType = EventEmitter.ON_UPDATE;
+    } else {
+        this.isRendered = true;
+    }
+
+    this.emit(eventType);
+
+    return this;
+};
+
+/**
+ * destroys and removes the Box
+ */
+Box.prototype.destroy = function () {
+    delete Box._nameRegistry[this.getName()];
+    delete Box._registry[this.getId()];
+
+    removeElement(this.getElement());
+};
+
+/**
+ * @static
+ * @type {Number}
+ */
+Box.MIN_DIMENSION = "100px";
+
+/**
+ * @static
+ * @type {String}
+ */
+Box.FLOW_VERTICAL = "vertical";
+
+/**
+ * @static
+ * @type {String}
+ */
+Box.FLOW_HORIZONTAL = "horizontal";
+
+/**
+ * @static
+ * @type {Object}
+ */
+Box._registry = {};
+
+/**
+ * @static
+ * @type {Object}
+ */
+Box._nameRegistry = {};
+
+/**
+ * static counter for Box ids
+ * @static
+ * @private
+ * @type {Number}
+ */
+Box.REG_PREFIX = "bbox_";
+
+/**
+ * static counter for Box ids
+ * @static
+ * @private
+ * @type {Number}
+ */
+Box._id = 0;
+
+/**
+ * generates a unique "box_[...]"id
+ * @static
+ * @return {String}
+ */
+Box.generateUniqueBoxId = function () {
+    return Box.REG_PREFIX + Box._id++;
+};
+
+/**
+ * removes a Box from the registry
+ * @param id {String} id of the Box to remove
+ */
+Box.removeBox = function (id) {
+    delete Box._registry[id];
+};
+
+/**
+ * returns a registered Box from the registry by id
+ * @param id {String} the Box id
+ * @return {Box}
+ */
+Box.getById = function (id) {
+    return Box._registry[id];
+};
+
+/**
+ * Returns a registered Box from the registry by name
+ * @param name
+ * @returns {*}
+ */
+Box.getByName = function(name) {
+    var id = Box._nameRegistry[name];
+    return id ? Box._registry[id] : null;
+};
+
+/**
+ * cleans up the Box.s_oRegistry
+ */
+Box.clean = function () {
+    Box._id = 0;
+    Box._registry = {};
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Adjustable.html">Adjustable</a></li><li><a href="Async.html">Async</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxComponent.html">BoxComponent</a></li><li><a href="BoxEvent.html">BoxEvent</a></li><li><a href="BoxRenderer.html">BoxRenderer</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Decorator.html">Decorator</a></li><li><a href="Dialog.html">Dialog</a></li><li><a href="Dimension.html">Dimension</a></li><li><a href="ElementWrapper.html">ElementWrapper</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Layout.html">Layout</a></li><li><a href="Manager.html">Manager</a></li><li><a href="ParentElementWrapper.html">ParentElementWrapper</a></li><li><a href="Surrogate.html">Surrogate</a></li><li><a href="ViewContainer.html">ViewContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="api.html">api</a></li></ul><h3>Mixins</h3><ul><li><a href="Serializer.html">Serializer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_boxxer">_boxxer</a></li><li><a href="global.html#_children">_children</a></li><li><a href="global.html#_decorators">_decorators</a></li><li><a href="global.html#_element">_element</a></li><li><a href="global.html#_eventTypes">_eventTypes</a></li><li><a href="global.html#_flowDirection">_flowDirection</a></li><li><a href="global.html#_id">_id</a></li><li><a href="global.html#_minValue">_minValue</a></li><li><a href="global.html#_mutedTypes">_mutedTypes</a></li><li><a href="global.html#_name">_name</a></li><li><a href="global.html#_parentElement">_parentElement</a></li><li><a href="global.html#_type">_type</a></li><li><a href="global.html#_value">_value</a></li><li><a href="global.html#component">component</a></li><li><a href="global.html#debugMode">debugMode</a></li><li><a href="global.html#getBody">getBody</a></li><li><a href="global.html#getEventTarget">getEventTarget</a></li><li><a href="global.html#getRenderer">getRenderer</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#inherit">inherit</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRendered">isRendered</a></li><li><a href="global.html#mix">mix</a></li><li><a href="global.html#removeElement">removeElement</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#">undefined</a></li><li><a href="global.html#view">view</a></li><li><a href="global.html#width">width</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Jun 25 2013 08:28:23 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

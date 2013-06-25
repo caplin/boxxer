@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/decorator/Decorator.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: modules/decorator/Decorator.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>exports.Decorator = Decorator;
+
+/**
+ * @constructor Decorator
+ */
+function Decorator() {}
+
+/**
+ * method needs to be overwritten!
+ *
+ * applies (engages) the decorator when the Box has been rendered
+ *
+ * @param box {boxxer.Box}
+ * @param template {HTMLElement}
+ * @returns {Decorator}
+ */
+Decorator.prototype.engage = function (box, template) {
+    return this;
+};
+
+/**
+ * returns a predefined template
+ * @param box {boxxer.Box}
+ * @returns {HTMLElement}
+ */
+Decorator.prototype.getTemplate = function (box) {
+    return document.createElement("div");
+};
+
+/**
+ * registry for every decorator
+ * @static
+ * @type {{}}
+ */
+Decorator.registry = {};
+
+/**
+ * determines whether a decorator has already been registered
+ * @param decoratorName {String} name of the decorator
+ * @returns {Boolean}
+ */
+Decorator.isRegistered = function (decoratorName) {
+    return Decorator.registry.hasOwnProperty(decoratorName);
+};
+
+/**
+ * returns the required decorator
+ * @param decoratorName {String}
+ * @returns {Decorator}
+ */
+Decorator.getDecorator = function (decoratorName) {
+    return Decorator.registry[decoratorName];
+};
+
+/**
+ * creates a new decorator instance to decorate
+ * @param prototype
+ * @returns {Decorator}
+ */
+Decorator.extend = function (prototype) {
+    var decorator = new Decorator();
+    var property;
+
+    for (property in prototype) {
+        if (prototype.hasOwnProperty(property)) {
+            decorator[property] = prototype[property];
+        }
+    }
+
+    //initialize decorator once
+    if (typeof decorator.init === "function") {
+        decorator.init();
+    }
+
+    return decorator;
+};
+
+/**
+ * creates and registers a new decorator
+ * @param name {String} name of the Decorator
+ * @param prototype {Object} map containing the applied functionality
+ * @returns {Decorator|undefined}
+ */
+Decorator.register = function (name, prototype) {
+    var registry = Decorator.registry;
+    var decorator;
+
+    if (name !== '' && !registry.hasOwnProperty(name)) {
+        decorator = Decorator.extend(prototype);
+        registry[name] = decorator;
+    }
+
+    return decorator;
+};
+
+exports.createDecorator = Decorator.register;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Adjustable.html">Adjustable</a></li><li><a href="Async.html">Async</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxComponent.html">BoxComponent</a></li><li><a href="BoxEvent.html">BoxEvent</a></li><li><a href="BoxRenderer.html">BoxRenderer</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Decorator.html">Decorator</a></li><li><a href="Dialog.html">Dialog</a></li><li><a href="Dimension.html">Dimension</a></li><li><a href="ElementWrapper.html">ElementWrapper</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Layout.html">Layout</a></li><li><a href="Manager.html">Manager</a></li><li><a href="ParentElementWrapper.html">ParentElementWrapper</a></li><li><a href="Surrogate.html">Surrogate</a></li><li><a href="ViewContainer.html">ViewContainer</a></li></ul><h3>Namespaces</h3><ul><li><a href="api.html">api</a></li></ul><h3>Mixins</h3><ul><li><a href="Serializer.html">Serializer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_boxxer">_boxxer</a></li><li><a href="global.html#_children">_children</a></li><li><a href="global.html#_decorators">_decorators</a></li><li><a href="global.html#_element">_element</a></li><li><a href="global.html#_eventTypes">_eventTypes</a></li><li><a href="global.html#_flowDirection">_flowDirection</a></li><li><a href="global.html#_id">_id</a></li><li><a href="global.html#_minValue">_minValue</a></li><li><a href="global.html#_mutedTypes">_mutedTypes</a></li><li><a href="global.html#_name">_name</a></li><li><a href="global.html#_parentElement">_parentElement</a></li><li><a href="global.html#_type">_type</a></li><li><a href="global.html#_value">_value</a></li><li><a href="global.html#component">component</a></li><li><a href="global.html#debugMode">debugMode</a></li><li><a href="global.html#getBody">getBody</a></li><li><a href="global.html#getEventTarget">getEventTarget</a></li><li><a href="global.html#getRenderer">getRenderer</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#inherit">inherit</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRendered">isRendered</a></li><li><a href="global.html#mix">mix</a></li><li><a href="global.html#removeElement">removeElement</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#">undefined</a></li><li><a href="global.html#view">view</a></li><li><a href="global.html#width">width</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Jun 25 2013 08:28:23 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>
