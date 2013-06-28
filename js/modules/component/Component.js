@@ -6,7 +6,7 @@ exports.Component = Component;
  * This interface must be implemented by a presentation-level class.
  * A presentation-level class represents something that occupies physical space in the page
  * container, such as the content of a panel or a dialog box. <code>Component</code> extends the
- * {@link ComponentLifecycleEvents} interface which defines the life cycle
+ * {@link Lifecycle} interface which defines the life cycle
  * events that may be raised by the container in response to the user's interaction with it. The
  * <code>Component</code> is automatically registered with its container so that it receives these
  * life cycle event callbacks.
