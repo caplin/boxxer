@@ -1,4 +1,0 @@
-Boxxer authors:
-
-Bence Kormos (Caplin) - Front-end
-Gilles Cochez (Caplin) - Backend, build
