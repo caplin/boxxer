@@ -30,9 +30,6 @@
 
         <script src="../lib/es5-shim.js"></script>
         <script src="../build/boxxer.src.js"></script>
-
-        <!--acceptance tests-->
-        <script src="acceptance/acceptance.test.js"></script>
 		<!--acceptance tests-->
 		<script>
             window.onload = function () {
@@ -54,7 +51,7 @@
                     });
 
                 oHierarchy.render();
-
+                window.frame = oHierarchy;
                 window.onresize = function () {
                     oHierarchy.render();
                 };

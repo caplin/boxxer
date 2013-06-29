@@ -203,5 +203,6 @@ ElementWrapper.prototype.minimize = function () {
  */
 // TODO implement
 ElementWrapper.prototype.restore = function () {
+    this.render();
     return this;
 };
