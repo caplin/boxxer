@@ -42,16 +42,7 @@ BoxComponent.prototype.getComponent = function () {
  * @returns {Box}
  */
 BoxComponent.render = function (box) {
-
-    var component = box.getComponent();
-    var element;
-
-    if (component) {
-        element = box.getElement();
-        BoxComponent.invoke(!box.isRendered ? "onOpen" : "onResize", box, [element.offsetWidth, element.offsetHeight]);
-    }
-
-    return this;
+    return BoxComponent.invoke(!box.isRendered ? "onOpen" : "onResize", box);
 };
 
 /**
@@ -60,11 +51,11 @@ BoxComponent.render = function (box) {
  * @param box {Box}
  * @param [args] {Array} Optional array of arguments to pass to the method being invoked
  */
-BoxComponent.invoke = function(methodName, box, args) {
+BoxComponent.invoke = function(methodName, box) {
     var component = box.getComponent();
 
     if (component && component[methodName]) {
-        component[methodName].apply(component, args || []);
+        component[methodName].apply(component, box);
     }
 
     return box;
@@ -76,7 +67,7 @@ BoxComponent.invoke = function(methodName, box, args) {
  * @returns {Box}
  */
 BoxComponent.destroy = function (box) {
-    BoxComponent.invoke("onClose", box, []);
+    return BoxComponent.invoke("onClose", box);
 };
 
 /**
@@ -85,7 +76,7 @@ BoxComponent.destroy = function (box) {
  * @returns {*}
  */
 BoxComponent.flowChange = function(box) {
-    BoxComponent.invoke("onFlowChange", box, []);
+    return BoxComponent.invoke("onFlowChange", box);
 };
 
 /**
@@ -94,7 +85,7 @@ BoxComponent.flowChange = function(box) {
  * @returns {*}
  */
 BoxComponent.maximize = function(box) {
-    BoxComponent.invoke("onMaximize", box, []);
+    return BoxComponent.invoke("onMaximize", box);
 };
 
 /**
@@ -103,7 +94,7 @@ BoxComponent.maximize = function(box) {
  * @returns {*}
  */
 BoxComponent.minimize = function(box) {
-    BoxComponent.invoke("onMinimize", box, []);
+    return BoxComponent.invoke("onMinimize", box);
 };
 
 /**
@@ -112,5 +103,23 @@ BoxComponent.minimize = function(box) {
  * @returns {*}
  */
 BoxComponent.restore = function(box) {
-    BoxComponent.invoke("onRestore", box, []);
+    return BoxComponent.invoke("onRestore", box);
+};
+
+/**
+ * invokes onRestore for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.show = function(box) {
+    return BoxComponent.invoke("onShow", box);
+};
+
+/**
+ * invokes onRestore for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.hide = function(box) {
+    return BoxComponent.invoke("onHide", box);
 };
