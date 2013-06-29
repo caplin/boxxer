@@ -276,7 +276,7 @@ Box.prototype.render = function () {
 Box.prototype.destroy = function () {
     delete Box._nameRegistry[this.getName()];
     delete Box._registry[this.getId()];
-
+    BoxComponent.destroy(this);
     removeElement(this.getElement());
 };
 
