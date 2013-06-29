@@ -299,6 +299,254 @@ Connection.POST = "POST";
  */
 Connection.GET = "GET";
 
+exports.Component = Component;
+
+/**
+ * @interface
+ * @class
+ * This interface must be implemented by a presentation-level class.
+ * A presentation-level class represents something that occupies physical space in the page
+ * container, such as the content of a panel or a dialog box. <code>Component</code> extends the
+ * {@link Lifecycle} interface which defines the life cycle events that may be raised by the container
+ * in response to the user's interaction with it. The <code>Component</code> is automatically registered
+ * with its container so that it receives these life cycle event callbacks.
+ *
+ * <p>Each implementation of a Component represents a different <b>Component type</b>,
+ * for example a Grid or a Trade Panel.</p>
+ *
+ * <p>Each subclass of <code>Component</code> must have an createFromSerializedState method
+ * which is responsible for constructing new instances of the Component.
+ *
+ * <p>The windowing environment, which provides the container within which the component exists,
+ * may only use a subset of the <code>Component</code> interface. A component therefore should be
+ * implemented so that it will work even if the (mandatory) methods {@link #getElement} and
+ * {@link LifeCycle#onOpen} are the only methods the windowing environment will invoke.</p>
+ *
+ * <p>The windowing environment determines whether the event methods are called immediately after
+ * or immediately before the event they refer to.</p>
+ *
+ * <p><code>Component</code> instances that have been configured via XML or saved as part of a
+ * layout are instantiated by the ComponentFactory. As such a
+ * <code>Component</code> must be registered with the using the factory's
+ * ComponentFactory.registerComponent method, passing
+ * in the name of the root XML tag that represents the component and a suitable static factory
+ * method can instantiate it.
+ * @constructor
+ *
+ * @implements LifeCycle
+ * @component
+ */
+function Component() {}
+
+/**
+ * Returns a reference to the container that is hosting this component. If no container has been
+ * set then this will return undefined.
+ *
+ * @deprecated
+ * @return {Box} The box hosting this component.
+ */
+Component.prototype.getContainer = function () {
+    return this.container;
+};
+
+/**
+ * Provides a reference to the container that will be hosting this component.
+ *
+ * @deprecated
+ * @see #setFrame
+ * @param {box} box The container hosting this component.
+ */
+Component.prototype.setContainer = function (box) {
+    this.container = box;
+};
+
+/**
+ * Just leaving it for now just in case but not sure we need it
+ * @deprecated
+ */
+Component.prototype.setFrame = Component.prototype.setContainer;
+
+/**
+ * Gets a guaranteed ID for this component instance.
+ * @type String
+ * @return A unique ID
+ * @throws {Error} if this method is not implemented by the subclass.
+ */
+// TODO do we need this as boxes have an ID? I guess so but need to look into it
+Component.prototype.getUniqueComponentId = function () {
+    throw new Error("Component.getUniqueComponentId() has not been implemented.");
+};
+
+/**
+ * Invoked when the windowing environment needs to display this component. It returns the HTML
+ * element that must be added to the DOM to represent this component. <code>getElement()</code>
+ * is invoked before any of the other <code>Component</code> interface methods.
+ *
+ * <p>This method is compulsory, and must be implemented.</p>
+ *
+ * <p>It should be designed execute quickly, as the windowing environment may freeze
+ * until it has returned.</p>
+ *
+ * @type HtmlElement
+ * @return The root <code>HtmlElement</code> used to display this component on a web page.
+ * Must not be <code>null</code> or <code>undefined</code>.
+ * @throws {Error} if this method is not implemented by the subclass.
+ */
+Component.prototype.getElement = function () {
+    throw new Error("Component.getElement() has not been implemented.");
+};
+
+/**
+ * Invoked when the windowing environment needs to save the state of this component. It returns an
+ * XML string or JSON object representation of the state.
+ *
+ * <p>This method is compulsory, and must be implemented.</p>
+ *
+ * <p>Example:</p>
+ *
+ * <pre>
+ * mybank.MyComponent = function()
+ * {
+ *	this.m_sSubject = null;
+ * };
+ * caplin.implement(mybank.MyComponent, Component);
+ *
+ * mybank.MyComponent.setSubject = function(sSubject)
+ * {
+ *	this.m_sSubject = sSubject;
+ * };
+ *
+ * // other Component methods ...
+ *
+ * mybank.MyComponent.getSerializedState = function()
+ * {
+ *	return "&lt;myComponent subject=\"" + this.m_sSubject + "\" /&gt;";
+ * };
+ * </pre>
+ *
+ * @type String
+ * @return An XML string representation of the state of this component.
+ * Must not be <code>null</code> or <code>undefined</code>.
+ * @throws {Error} if this method is not implemented by the subclass.
+ */
+// TODO update jsdoc with JSON example instead of XML
+Component.prototype.getSerializedState = function () {
+    throw new Error("Component.getSerializedState() has not been implemented.");
+};
+
+/**
+ * Invoked so the container can determine whether the component is currently permissioned for use.
+ *
+ * @return The set of permissioning information that can be used to query
+ * {@link caplin.services.security.PermissionService#canUserPerformAction}.
+ * @type caplin.services.security.PermissionKey
+ */
+// TODO Something with this...
+Component.prototype.getPermissionKey = function () {};
+
+exports.LifeCycle = LifeCycle;
+
+/**
+ * @beta
+ * @class
+ * <p>Component life cycle events are emitted by the box instances. Overriding any of the methods
+ * in this listener interface is optional, but doing so will enable you to react to the related
+ * event.</p>
+ *
+ * @constructor
+ * @interface
+ */
+function LifeCycle() {}
+
+/**
+ * Invoked when the frame is first displayed. It will only ever be called once when the box instance is rendered to the
+ * document so that dimensions can be calculated.
+ *
+ * @param {int} nWidth The width of the frame, in pixels.
+ * @param {int} nHeight The height of the frame, in pixels.
+ */
+LifeCycle.prototype.onOpen = function(nWidth, nHeight) {};
+
+/**
+ * Invoked when the frame containing this component is closed.
+ *
+ * <p>This method should be used to clean up any resources the component currently has open,
+ * including subscriptions and any other listeners that may have been registered. Once
+ * <code>onClose()</code> has been called no further methods will be called for this
+ * component.</p>
+ *
+ * <p>It is possible for the <code>onClose()</code> method to be invoked before
+ * <code>onOpen()</code> if the component was instantiated but never displayed (for example if the
+ * user was not permissioned to view the component) in which case this method should only be used
+ * to clean up any resources it has opened within its constructor, and not those that it would
+ * have opened within <code>onOpen()</code>.</p>
+ */
+LifeCycle.prototype.onClose = function() {};
+
+/**
+ * Invoked when a box that has been hidden (see {@link #onHide}) is now back in view. It
+ * should restore any resources that were stopped or suspended by <code>onHide()</code>.
+ *
+ * <p>Note that this method is not called when the component within the frame is first
+ * displayed (see {@link #onOpen}).</p>
+ */
+LifeCycle.prototype.onShow = function() {};
+
+/**
+ * Invoked when a frame is no longer in view. It should stop or suspend any resources that may
+ * be processor intensive, such as subscriptions, so they are not active whilst the
+ * frame is hidden.
+ *
+ * @see #onShow
+ */
+LifeCycle.prototype.onHide = function() {};
+
+/**
+ * Invoked when the frame has been minimized.
+ *
+ * @see #onRestore
+ */
+LifeCycle.prototype.onMinimize = function() {};
+
+/**
+ * Invoked when the frame has been maximized.
+ *
+ * @see #onRestore
+ */
+LifeCycle.prototype.onMaximize = function() {};
+
+/**
+ * Invoked when the frame has been restored from a minimized or maximized state.
+ *
+ * @see #onMinimize
+ * @see #onMaximize
+ */
+LifeCycle.prototype.onRestore = function() {};
+
+/**
+ * Invoked when the dimensions of the frame change.
+ *
+ * @param {int} nWidth The new width of the frame, in pixels.
+ * @param {int} nHeight The new height of the frame, in pixels.
+ */
+LifeCycle.prototype.onResize = function(nWidth, nHeight) {};
+
+/**
+ * Invoked when the frame becomes the active or focused frame within the page.
+ */
+// TODO this is not ideal as API onFocus would be better but we can create an alias
+LifeCycle.prototype.onActivate = function() {};
+
+/**
+ * Invoked when the frame ceases to be the active or focused frame within the page.
+ */
+// TODO this is not ideal as API onBlur would be better but we can create an alias
+LifeCycle.prototype.onDeactivate = function() {};
+
+/**
+ * Invoked when the frame ceases to be the active or focused frame within the page.
+ */
+LifeCycle.prototype.onFlowChange = function() {};
 exports.Decorator = Decorator;
 
 /**
@@ -578,16 +826,95 @@ EventEmitter.prototype.emit = function () {
 };
 
 /**
+ * Fired when the box is rendered
  * @static
  * @type {String}
  */
+// TODO Link to LifeCycle#onOpen is a component is present
 EventEmitter.ON_RENDER = "render";
 
 /**
+ * Fired when the box is updated
  * @static
  * @type {String}
  */
+// TODO Add LifeCycle equivalent
 EventEmitter.ON_UPDATE = "update";
+
+/**
+ * Fired when the box is shown
+ * @static
+ * @type {String}
+ */
+// TODO Link to LifeCycle#onShow
+EventEmitter.ON_SHOW = "show";
+
+/**
+ * Fire when the box is hidden
+ * @static
+ * @type {String}
+ */
+// TODO Link to LifeCycle#onHide
+EventEmitter.ON_HIDE = "hide";
+
+/**
+ * Fired when the box is resized
+ * @static
+ * @type {String}
+ */
+// TODO Link to LifeCycle#onResize
+EventEmitter.ON_RESIZE = "resize";
+
+/**
+ * Fired when the box flow is changed
+ * @static
+ * @type {String}
+ */
+// TODO Add LifeCycle equivalent
+EventEmitter.ON_FLOW = "flow";
+
+/**
+ * Fired when the box gain focus
+ * @static
+ * @type {String}
+ */
+// TODO Link to LifeCycle#onActivate
+EventEmitter.ON_FOCUS = "focus";
+
+/**
+ * Fired when the box loses focus
+ * @static
+ * @type {String}
+ */
+// TODO Link to LifeCycle#onDeactivate
+EventEmitter.ON_FOCUS = "blur";
+
+/**
+ * Fired when the box is restored
+ * @static
+ * @type {String}
+ */
+// TODO Implement restore
+// TODO Link to LifeCycle#onRestore
+EventEmitter.ON_RESTORE = "restore";
+
+/**
+ * Fired when the box is minimized
+ * @static
+ * @type {String}
+ */
+// TODO implemement minimize
+// TODO Link to LifeCycle#onDeactivate
+EventEmitter.ON_MINIMIZE = "minimize";
+
+/**
+ * Fired when the box is maximized
+ * @static
+ * @type {String}
+ */
+// TODO implement maximize
+// TODO Link to LifeCycle#onDeactivate
+EventEmitter.ON_MAXIMIZE = "maximize";
 
 exports.Layout = Layout;
 
@@ -780,6 +1107,21 @@ BoxComponent.destroy = function (box) {
     return box;
 };
 
+/**
+ * invokes onFlowChange for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.flowChange = function(box) {
+    var component = box.getComponent();
+
+    if (component) {
+        component.onFlowChange();
+    }
+
+    return box;
+};
+
 exports.ElementWrapper = ElementWrapper;
 
 /**
@@ -922,6 +1264,36 @@ ElementWrapper.prototype.html = function (html) {
     }
 
     return this;
+};
+
+/**
+ * Hide the HTML representation of the Box instance
+ */
+// TODO LifeCycle onHide firing if present
+ElementWrapper.prototype.hide = function () {
+    this.getElement().style.display = 'none';
+    BoxComponent.hide(this);
+    this.emit(EventEmitter.ON_HIDE);
+    return this;
+};
+
+/**
+ * Show the HTML representation of the Box instance
+ */
+// TODO LifeCycle onShow firing if present
+ElementWrapper.prototype.show = function () {
+    this.getElement().style.display = '';
+    BoxComponent.show(this);
+    this.emit(EventEmitter.ON_SHOW);
+    return this;
+};
+
+/**
+ * Toggle the visibility of the Box instance
+ */
+// TODO LifeCycle onShow/noHide firing if present
+ElementWrapper.prototype.toggle = function () {
+    return (this.getElement().style.display === 'none') ? this.show() : this.hide();
 };
 
 exports.ParentElementWrapper = ParentElementWrapper;
@@ -1921,6 +2293,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    BoxComponent.flowChange(this);
     return this;
 };
 
@@ -2058,7 +2431,6 @@ Box.prototype.render = function () {
     BoxRenderer.render(this, parent, flowDirection);
     BoxComponent.render(this);
 
-    //TODO: trigger events regarding whether the Box has already been rendered (render/change)
     if (this.isRendered) {
         eventType = EventEmitter.ON_UPDATE;
     } else {
@@ -2076,7 +2448,7 @@ Box.prototype.render = function () {
 Box.prototype.destroy = function () {
     delete Box._nameRegistry[this.getName()];
     delete Box._registry[this.getId()];
-
+    BoxComponent.destroy(this);
     removeElement(this.getElement());
 };
 
