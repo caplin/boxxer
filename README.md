@@ -1,7 +1,21 @@
-Boxxer - Frame manager
+Boxxer - Layout manager
 =======================
 
-Boxxer is an experiment to replace webcentric without the CSS3 box layout but similar to it.
+Boxxer is an open source project which aim to simplify the construction of complex layouts.
+
+Here are the features aimed for. Not all have been implemented or are stable as yet.
+
+* Automatic handling of layout element resizing
+* Weight / Percentage / Fixed (px) dimension
+* Server side layout persistence in node
+* Modular so custom build are possible
+* Programatic approach to layout
+* Custom build capability
+* Component interfaces
+* Layout events firing
+* Decorators API
+* Easy to use API
+* more...
 
 ## Grunt build
 
