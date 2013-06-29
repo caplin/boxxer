@@ -171,7 +171,11 @@ Box.prototype.addBox = function (box, name) {
 
     box.setParentElement(this.getElement());
 
-    this.getChildren()[name || box.getId()] = box;
+    if (name) {
+        this.setName(name);
+    }
+
+    this.getChildren()[box.getName() || box.getId()] = box;
 
     return this;
 };
