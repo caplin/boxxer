@@ -193,16 +193,15 @@ ElementWrapper.prototype.maximize = function () {
 /**
  * Minimize the visual representation of the Box instance
  */
-// TODO implement
 ElementWrapper.prototype.minimize = function () {
+    this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     return this;
 };
 
 /**
  * Restore the visual representation of the Box instance to its original configuration
  */
-// TODO implement
 ElementWrapper.prototype.restore = function () {
-    this.render();
+    this.setElementDimension(this.width.getValue(), this.height.getValue());
     return this;
 };

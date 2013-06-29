@@ -284,7 +284,7 @@ Box.prototype.destroy = function () {
  * @static
  * @type {Number}
  */
-Box.MIN_DIMENSION = "100px";
+Box.MIN_DIMENSION = "10px";
 
 /**
  * @static
