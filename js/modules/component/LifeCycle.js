@@ -88,9 +88,11 @@ LifeCycle.prototype.onResize = function(nWidth, nHeight) {};
 /**
  * Invoked when the frame becomes the active or focused frame within the page.
  */
+// TODO this is not ideal as API onFocus would be better but we can create an alias
 LifeCycle.prototype.onActivate = function() {};
 
 /**
  * Invoked when the frame ceases to be the active or focused frame within the page.
  */
+// TODO this is not ideal as API onBlur would be better but we can create an alias
 LifeCycle.prototype.onDeactivate = function() {};
