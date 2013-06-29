@@ -1098,7 +1098,7 @@ BoxComponent.invoke = function(methodName, box) {
     var component = box.getComponent();
 
     if (component && component[methodName]) {
-        component[methodName].apply(component, box);
+        component[methodName].apply(component, [box]);
     }
 
     return box;
@@ -1355,6 +1355,10 @@ ElementWrapper.prototype.toggle = function () {
  */
 // TODO do we handle maximizing to a parent only instead of document?
 ElementWrapper.prototype.maximize = function () {
+    var element = this.getElement();
+    element.style.position = "absolute";
+    element.style.left = "0";
+    element.style.top = "0";
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
     return this;
@@ -1373,6 +1377,10 @@ ElementWrapper.prototype.minimize = function () {
  * Restore the visual representation of the Box instance to its original configuration
  */
 ElementWrapper.prototype.restore = function () {
+    var element = this.getElement();
+    element.style.position = "relative";
+    element.style.left = "auto";
+    element.style.top = "auto";
     this.setElementDimension(this.width.getValue(), this.height.getValue());
     BoxComponent.restore(this);
     return this;
@@ -2147,6 +2155,39 @@ boxxer.createDecorator("HeaderDecorator", {
         return header;
     }
 });
+boxxer.createDecorator("MaximizeDecorator", {
+
+    //engages custom template for Box
+    engage: function (box, template) {
+        var element = box.getElement();
+        element.style.position = "relative";
+        element.appendChild(template);
+    },
+
+    //returns custom template
+    getTemplate: function (box) {
+        var button = document.createElement("button");
+
+        button.innerHTML = "+";
+        button.style.position = "absolute";
+        button.style.right = "10px";
+        button.style.top = "10px";
+
+        button.onclick =(function(box){
+            return function() {
+                if (button.innerHTML === "+") {
+                    box.maximize();
+                    button.innerHTML = "~";
+                } else {
+                    box.restore();
+                    button.innerHTML = "+";
+                }
+            }
+        })(box);
+
+        return button;
+    }
+});
 exports.Dialog = Dialog;
 
 /**
@@ -2425,7 +2466,11 @@ Box.prototype.addBox = function (box, name) {
 
     box.setParentElement(this.getElement());
 
-    this.getChildren()[name || box.getId()] = box;
+    if (name) {
+        this.setName(name);
+    }
+
+    this.getChildren()[box.getName() || box.getId()] = box;
 
     return this;
 };
