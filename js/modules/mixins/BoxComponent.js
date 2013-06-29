@@ -3,22 +3,23 @@ exports.BoxComponent = BoxComponent;
 /**
  * @name BoxComponent
  * Component adapter class to provide ComponentLifeCycleEvents for the Component inside the Box
- * @param component {caplin.component.Component|undefined}
+ * @param component {Component|undefined}
  * @constructor BoxComponent
  */
 function BoxComponent(component) {
     /**
-     * @type {caplin.component.Component|undefined}
+     * @type {Component|undefined}
      */
     this.component = component;
 }
 
 /**
  * sets the component on the Box instance
- * @param component {caplin.component.Component}
+ * @param component {Component}
  * @returns {Box}
  */
 BoxComponent.prototype.setComponent = function (component) {
+
     if (component) {
         this.component = component;
     }
@@ -28,7 +29,7 @@ BoxComponent.prototype.setComponent = function (component) {
 
 /**
  * returns the Component
- * @returns {caplin.component.Component}
+ * @returns {Component}
  */
 BoxComponent.prototype.getComponent = function () {
     return this.component;
@@ -41,22 +42,32 @@ BoxComponent.prototype.getComponent = function () {
  * @returns {Box}
  */
 BoxComponent.render = function (box) {
+
     var component = box.getComponent();
     var element;
 
     if (component) {
         element = box.getElement();
-
-        //trigger open if not rendered
-        if (!box.isRendered) {
-            component.onOpen(element.offsetWidth, element.offsetHeight);
-        } else {
-            //trigger resize
-            component.onResize(element.offsetWidth, element.offsetHeight);
-        }
+        BoxComponent.invoke(!box.isRendered ? "onOpen" : "onResize", box, [element.offsetWidth, element.offsetHeight]);
     }
 
     return this;
+};
+
+/**
+ * Invokes a onEvent method on a component if it is present
+ * @param methodName {String} Method name to invoke on the component
+ * @param box {Box}
+ * @param [args] {Array} Optional array of arguments to pass to the method being invoked
+ */
+BoxComponent.invoke = function(methodName, box, args) {
+    var component = box.getComponent();
+
+    if (component && component[methodName]) {
+        component[methodName].apply(component, args || []);
+    }
+
+    return box;
 };
 
 /**
@@ -65,13 +76,7 @@ BoxComponent.render = function (box) {
  * @returns {Box}
  */
 BoxComponent.destroy = function (box) {
-    var component = box.getComponent();
-
-    if (component) {
-        component.onClose();
-    }
-
-    return box;
+    BoxComponent.invoke("onClose", box, []);
 };
 
 /**
@@ -80,11 +85,32 @@ BoxComponent.destroy = function (box) {
  * @returns {*}
  */
 BoxComponent.flowChange = function(box) {
-    var component = box.getComponent();
+    BoxComponent.invoke("onFlowChange", box, []);
+};
 
-    if (component) {
-        component.onFlowChange();
-    }
+/**
+ * invokes onMaximize for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.maximize = function(box) {
+    BoxComponent.invoke("onMaximize", box, []);
+};
 
-    return box;
+/**
+ * invokes onMinimize for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.minimize = function(box) {
+    BoxComponent.invoke("onMinimize", box, []);
+};
+
+/**
+ * invokes onRestore for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
+BoxComponent.restore = function(box) {
+    BoxComponent.invoke("onRestore", box, []);
 };

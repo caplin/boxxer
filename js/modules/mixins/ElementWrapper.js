@@ -32,6 +32,18 @@ ElementWrapper.prototype._setElementHeight = function (height) {
 };
 
 /**
+ * Set new dimension for the elements
+ * @param width {Number}
+ * @param height {Number}
+ * @private
+ */
+ElementWrapper.prototype.setElementDimension = function (width, height) {
+    this._setElementWidth(width);
+    this._setElementHeight(height);
+    return this;
+};
+
+/**
  * returns the DOM Element of the Box
  * @return {HTMLElement}
  */
@@ -145,7 +157,6 @@ ElementWrapper.prototype.html = function (html) {
 /**
  * Hide the HTML representation of the Box instance
  */
-// TODO LifeCycle onHide firing if present
 ElementWrapper.prototype.hide = function () {
     this.getElement().style.display = 'none';
     BoxComponent.hide(this);
@@ -156,7 +167,6 @@ ElementWrapper.prototype.hide = function () {
 /**
  * Show the HTML representation of the Box instance
  */
-// TODO LifeCycle onShow firing if present
 ElementWrapper.prototype.show = function () {
     this.getElement().style.display = '';
     BoxComponent.show(this);
@@ -167,7 +177,31 @@ ElementWrapper.prototype.show = function () {
 /**
  * Toggle the visibility of the Box instance
  */
-// TODO LifeCycle onShow/noHide firing if present
 ElementWrapper.prototype.toggle = function () {
     return (this.getElement().style.display === 'none') ? this.show() : this.hide();
+};
+
+/**
+ * Maximize the visual representation of the Box instance
+ */
+// TODO do we handle maximizing to a parent only instead of document?
+ElementWrapper.prototype.maximize = function () {
+    this.setElementDimension(document.width, document.height);
+    return this;
+};
+
+/**
+ * Minimize the visual representation of the Box instance
+ */
+// TODO implement
+ElementWrapper.prototype.minimize = function () {
+    return this;
+};
+
+/**
+ * Restore the visual representation of the Box instance to its original configuration
+ */
+// TODO implement
+ElementWrapper.prototype.restore = function () {
+    return this;
 };
