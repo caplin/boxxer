@@ -186,6 +186,10 @@ ElementWrapper.prototype.toggle = function () {
  */
 // TODO do we handle maximizing to a parent only instead of document?
 ElementWrapper.prototype.maximize = function () {
+    var element = this.getElement();
+    element.style.position = "absolute";
+    element.style.left = "0";
+    element.style.top = "0";
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
     return this;
@@ -204,6 +208,10 @@ ElementWrapper.prototype.minimize = function () {
  * Restore the visual representation of the Box instance to its original configuration
  */
 ElementWrapper.prototype.restore = function () {
+    var element = this.getElement();
+    element.style.position = "relative";
+    element.style.left = "auto";
+    element.style.top = "auto";
     this.setElementDimension(this.width.getValue(), this.height.getValue());
     BoxComponent.restore(this);
     return this;
