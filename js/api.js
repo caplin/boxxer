@@ -11,19 +11,16 @@
  * @return {Box}
  */
 api.createBox = function createBox(setup) {
-    var flow,
-        box;
 
     setup = setup || {};
 
-    flow = setup.flow;
-    box = new Box(
-        setup.width,
-        setup.height,
-        (setup.parent || setup.container)
-    );
-
-    return box.setFlowDirection(flow).setComponent(setup.component);
+    return new Box(
+            setup.width,
+            setup.height,
+            (setup.parent || setup.container)
+        )
+        .setFlowDirection(setup.flow)
+        .setComponent(setup.component);
 };
 /**
  * @param setup {Object} map of settings
@@ -38,16 +35,13 @@ api.createBox = function createBox(setup) {
  * @return {Dialog}
  */
 api.createDialog = function createDialog(setup) {
-    var dialog;
 
     setup = setup || {};
 
-    dialog = new Dialog(
+    return new Dialog(
         setup.width,
         setup.height,
         setup.left,
         setup.right
     );
-
-    return dialog;
 };

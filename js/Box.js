@@ -78,6 +78,8 @@ function Box(width, height, parent) {
 
     //registering Box
     Box._registry[this.getId()] = this;
+
+    return this;
 }
 
 mix(Box, Adjustable);
@@ -120,7 +122,7 @@ Box.prototype.getFlowDirection = function () {
  * @param flowDirection {String}
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
-    this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    this._flowDirection = (flowDirection || Box.FLOW_VERTICAL);
     BoxComponent.flowChange(this);
     return this;
 };
