@@ -74,7 +74,7 @@ Store a layout
 ```javascript
 
 // create a box
-var frame = new boxxerBox();
+var frame = new boxxer.Box();
 
 // name it
 frame.setName("myLayout");
@@ -94,7 +94,7 @@ Retrieve a layout
 ```javascript
 
 // create a box
-var frame = new boxxerBox();
+var frame = new boxxer.Box();
 
 // name it
 frame.setName("myLayout");
