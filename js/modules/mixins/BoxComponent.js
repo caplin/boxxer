@@ -55,7 +55,7 @@ BoxComponent.invoke = function(methodName, box) {
     var component = box.getComponent();
 
     if (component && component[methodName]) {
-        component[methodName].apply(component, box);
+        component[methodName].apply(component, [box]);
     }
 
     return box;
