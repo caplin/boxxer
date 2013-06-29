@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<title>Component tests</title>
+<link href="../css/global.css" rel="stylesheet" />
+<script src="../build/boxxer.src.js"></script>
+<style>
+    div {  background: rgba(120, 120, 120, 0.25); }
+    div:hover { background: rgba(0, 120, 0, 0.25); }
+</style>
+<body></body>
+<script>
+
+    // Tile component
+    var Tile = function() {
+        this.element = document.createElement("div");
+        this.element.innerHTML = "<p>Tile</p>";
+    };
+
+    // implements Component and LifeCycle interfaces
+    boxxer.mix(Tile, boxxer.Component);
+    boxxer.mix(Tile, boxxer.LifeCycle);
+
+    Tile.prototype.onOpen = function(box) {
+        console.log("tile", box.getId());
+    };
+
+    Tile.prototype.onRestore = function(box) {
+        console.log("tile restored", box.getId());
+    };
+
+    Tile.prototype.onMaximize = function(box) {
+        console.log("tile maximized", box.getId());
+    };
+
+    // create our layout
+    var frame = boxxer.createBox().setName("myLayout");
+    var header = boxxer.createBox().addClass("header");
+    var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
+    var blotter = boxxer.createBox({height:2}).addClass("blotter");
+
+    // create a bunch of tiles
+    for (var i = 0; i < 10; i++) {
+
+        var box = boxxer.createBox({
+                width: "200px",
+                height: "200px",
+                component: new Tile()
+            })
+            .addDecorator("MaximizeDecorator");
+
+        tileSet.addBox(box);
+    }
+
+    // add
+    frame.addBox(header).addBox(tileSet).addBox(blotter);
+
+    frame.render();
+    window.onresize = function () {
+        frame.render();
+    };
+</script>
+</html>
