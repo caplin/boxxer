@@ -16,10 +16,9 @@ function LifeCycle() {}
  * Invoked when the frame is first displayed. It will only ever be called once when the box instance is rendered to the
  * document so that dimensions can be calculated.
  *
- * @param {int} nWidth The width of the frame, in pixels.
- * @param {int} nHeight The height of the frame, in pixels.
+ * @param box {Box}
  */
-LifeCycle.prototype.onOpen = function(nWidth, nHeight) {};
+LifeCycle.prototype.onOpen = function(box) {};
 
 /**
  * Invoked when the frame containing this component is closed.
@@ -34,8 +33,10 @@ LifeCycle.prototype.onOpen = function(nWidth, nHeight) {};
  * user was not permissioned to view the component) in which case this method should only be used
  * to clean up any resources it has opened within its constructor, and not those that it would
  * have opened within <code>onOpen()</code>.</p>
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onClose = function() {};
+LifeCycle.prototype.onClose = function(box) {};
 
 /**
  * Invoked when a box that has been hidden (see {@link #onHide}) is now back in view. It
@@ -43,8 +44,10 @@ LifeCycle.prototype.onClose = function() {};
  *
  * <p>Note that this method is not called when the component within the frame is first
  * displayed (see {@link #onOpen}).</p>
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onShow = function() {};
+LifeCycle.prototype.onShow = function(box) {};
 
 /**
  * Invoked when a frame is no longer in view. It should stop or suspend any resources that may
@@ -52,52 +55,65 @@ LifeCycle.prototype.onShow = function() {};
  * frame is hidden.
  *
  * @see #onShow
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onHide = function() {};
+LifeCycle.prototype.onHide = function(box) {};
 
 /**
  * Invoked when the frame has been minimized.
  *
  * @see #onRestore
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onMinimize = function() {};
+LifeCycle.prototype.onMinimize = function(box) {};
 
 /**
  * Invoked when the frame has been maximized.
  *
  * @see #onRestore
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onMaximize = function() {};
+LifeCycle.prototype.onMaximize = function(box) {};
 
 /**
  * Invoked when the frame has been restored from a minimized or maximized state.
  *
  * @see #onMinimize
  * @see #onMaximize
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onRestore = function() {};
+LifeCycle.prototype.onRestore = function(box) {};
 
 /**
  * Invoked when the dimensions of the frame change.
  *
- * @param {int} nWidth The new width of the frame, in pixels.
- * @param {int} nHeight The new height of the frame, in pixels.
+ * @param box {Box}
  */
-LifeCycle.prototype.onResize = function(nWidth, nHeight) {};
+LifeCycle.prototype.onResize = function(box) {};
 
 /**
  * Invoked when the frame becomes the active or focused frame within the page.
+ *
+ * @param box {Box}
  */
 // TODO this is not ideal as API onFocus would be better but we can create an alias
-LifeCycle.prototype.onActivate = function() {};
+LifeCycle.prototype.onActivate = function(box) {};
 
 /**
  * Invoked when the frame ceases to be the active or focused frame within the page.
+ *
+ * @param box {Box}
  */
 // TODO this is not ideal as API onBlur would be better but we can create an alias
-LifeCycle.prototype.onDeactivate = function() {};
+LifeCycle.prototype.onDeactivate = function(box) {};
 
 /**
  * Invoked when the frame ceases to be the active or focused frame within the page.
+ *
+ * @param box {Box}
  */
-LifeCycle.prototype.onFlowChange = function() {};
+LifeCycle.prototype.onFlowChange = function(box) {};
