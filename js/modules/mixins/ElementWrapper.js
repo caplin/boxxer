@@ -148,6 +148,8 @@ ElementWrapper.prototype.html = function (html) {
 // TODO LifeCycle onHide firing if present
 ElementWrapper.prototype.hide = function () {
     this.getElement().style.display = 'none';
+    BoxComponent.hide(this);
+    this.emit(EventEmitter.ON_HIDE);
     return this;
 };
 
@@ -157,6 +159,8 @@ ElementWrapper.prototype.hide = function () {
 // TODO LifeCycle onShow firing if present
 ElementWrapper.prototype.show = function () {
     this.getElement().style.display = '';
+    BoxComponent.show(this);
+    this.emit(EventEmitter.ON_SHOW);
     return this;
 };
 

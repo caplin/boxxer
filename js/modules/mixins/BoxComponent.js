@@ -74,6 +74,11 @@ BoxComponent.destroy = function (box) {
     return box;
 };
 
+/**
+ * invokes onFlowChange for the Component inside the Box instance
+ * @param box
+ * @returns {*}
+ */
 BoxComponent.flowChange = function(box) {
     var component = box.getComponent();
 
