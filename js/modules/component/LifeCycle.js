@@ -28,12 +28,6 @@ LifeCycle.prototype.onOpen = function(box) {};
  * <code>onClose()</code> has been called no further methods will be called for this
  * component.</p>
  *
- * <p>It is possible for the <code>onClose()</code> method to be invoked before
- * <code>onOpen()</code> if the component was instantiated but never displayed (for example if the
- * user was not permissioned to view the component) in which case this method should only be used
- * to clean up any resources it has opened within its constructor, and not those that it would
- * have opened within <code>onOpen()</code>.</p>
- *
  * @param box {Box}
  */
 LifeCycle.prototype.onClose = function(box) {};
