@@ -6,10 +6,9 @@ exports.Component = Component;
  * This interface must be implemented by a presentation-level class.
  * A presentation-level class represents something that occupies physical space in the page
  * container, such as the content of a panel or a dialog box. <code>Component</code> extends the
- * {@link Lifecycle} interface which defines the life cycle
- * events that may be raised by the container in response to the user's interaction with it. The
- * <code>Component</code> is automatically registered with its container so that it receives these
- * life cycle event callbacks.
+ * {@link Lifecycle} interface which defines the life cycle events that may be raised by the container
+ * in response to the user's interaction with it. The <code>Component</code> is automatically registered
+ * with its container so that it receives these life cycle event callbacks.
  *
  * <p>Each implementation of a Component represents a different <b>Component type</b>,
  * for example a Grid or a Trade Panel.</p>
@@ -43,7 +42,7 @@ function Component() {}
  * set then this will return undefined.
  *
  * @deprecated
- * @return {Box} box The box hosting this component.
+ * @return {Box} The box hosting this component.
  */
 Component.prototype.getContainer = function () {
     return this.container;

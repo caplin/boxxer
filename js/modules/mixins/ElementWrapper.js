@@ -141,3 +141,29 @@ ElementWrapper.prototype.html = function (html) {
 
     return this;
 };
+
+/**
+ * Hide the HTML representation of the Box instance
+ */
+// TODO LifeCycle onHide firing if present
+ElementWrapper.prototype.hide = function () {
+    this.getElement().style.display = 'none';
+    return this;
+};
+
+/**
+ * Show the HTML representation of the Box instance
+ */
+// TODO LifeCycle onShow firing if present
+ElementWrapper.prototype.show = function () {
+    this.getElement().style.display = '';
+    return this;
+};
+
+/**
+ * Toggle the visibility of the Box instance
+ */
+// TODO LifeCycle onShow/noHide firing if present
+ElementWrapper.prototype.toggle = function () {
+    return (this.getElement().style.display === 'none') ? this.show() : this.hide();
+};
