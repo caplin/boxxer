@@ -121,6 +121,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_HORIZONTAL);
+    BoxComponent.flowChange(this);
     return this;
 };
 
@@ -258,7 +259,6 @@ Box.prototype.render = function () {
     BoxRenderer.render(this, parent, flowDirection);
     BoxComponent.render(this);
 
-    //TODO: trigger events regarding whether the Box has already been rendered (render/change)
     if (this.isRendered) {
         eventType = EventEmitter.ON_UPDATE;
     } else {

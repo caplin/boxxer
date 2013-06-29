@@ -96,3 +96,8 @@ LifeCycle.prototype.onActivate = function() {};
  */
 // TODO this is not ideal as API onBlur would be better but we can create an alias
 LifeCycle.prototype.onDeactivate = function() {};
+
+/**
+ * Invoked when the frame ceases to be the active or focused frame within the page.
+ */
+LifeCycle.prototype.onFlowChange = function() {};

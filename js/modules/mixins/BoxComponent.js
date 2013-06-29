@@ -73,3 +73,13 @@ BoxComponent.destroy = function (box) {
 
     return box;
 };
+
+BoxComponent.flowChange = function(box) {
+    var component = box.getComponent();
+
+    if (component) {
+        component.onFlowChange();
+    }
+
+    return box;
+};
