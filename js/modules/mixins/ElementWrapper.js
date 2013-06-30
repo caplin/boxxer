@@ -68,6 +68,23 @@ ElementWrapper.prototype.addClass = function (className) {
 
     return this;
 };
+/**
+ * remove a class to the HTMLElementWrapper
+ * @param className {String} class name to remove
+ */
+ElementWrapper.prototype.removeClass = function (className) {
+
+    var attribute = this.getElement().getAttribute("class"),
+        keep = [];
+
+    (attribute ? attribute.split(" ") : []).forEach(function(currentClassName) {
+        if (currentClassName !== className) {
+            keep.push(currentClassName);
+        }
+    });
+
+    return this.getElement().setAttribute("class", keep.join(" "));;
+};
 
 /**
  * determines whether the Box DOM Element's class attribute contains the specified string
@@ -203,14 +220,16 @@ ElementWrapper.prototype.toggle = function () {
  */
 ElementWrapper.prototype.maximize = function () {
     this.css({
-        position: "absolute",
-        left: "0",
-        top: "0",
-        zIndex: Box.getZIndex()
-    });
-    this.setElementDimension(document.width, document.height);
+            position: "absolute",
+            left: "0",
+            top: "0",
+            zIndex: Box.getZIndex()
+        })
+        .addClass("maximized")
+        .setElementDimension(document.width, document.height)
+        .emit(EventEmitter.ON_MAXIMIZE);
+
     BoxComponent.maximize(this);
-    this.emit(EventEmitter.ON_MAXIMIZE);
     return this;
 };
 
@@ -218,9 +237,11 @@ ElementWrapper.prototype.maximize = function () {
  * Minimize the visual representation of the Box instance
  */
 ElementWrapper.prototype.minimize = function () {
-    this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
+    this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue())
+        .addClass("minimized")
+        .emit(EventEmitter.ON_MINIMIZE);
+
     BoxComponent.minimize(this);
-    this.emit(EventEmitter.ON_MINIMIZE);
     return this;
 };
 
@@ -229,13 +250,17 @@ ElementWrapper.prototype.minimize = function () {
  */
 ElementWrapper.prototype.restore = function () {
     this.css({
-        position: "relative",
-        left: "auto",
-        top: "auto",
-        zIndex: "auto"
-    });
-    this.setElementDimension(this.width.getValue(), this.height.getValue());
+            position: "relative",
+            left: "auto",
+            top: "auto",
+            zIndex: "auto"
+        })
+        .removeClass("maximized")
+        .removeClass("minimized")
+        .setElementDimension(this.width.getValue(), this.height.getValue())
+        .emit(EventEmitter.ON_RESTORE);
+
     BoxComponent.restore(this);
-    this.emit(EventEmitter.ON_RESTORE);
+
     return this;
 };
