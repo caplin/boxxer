@@ -25,6 +25,8 @@ DOMEvent.prototype.on = function(eventType, callback) {
 
 /**
  * Unbind an event
+ * @param eventType
+ * @returns {*}
  */
 DOMEvent.prototype.off = function(eventType) {
     if (this._callback) {
