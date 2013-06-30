@@ -73,14 +73,12 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
     // create a bunch of tiles
     for (var i = 0; i < 10; i++) {
 
-        var box = boxxer.createBox({
-                width: "200px",
-                height: "200px",
-                component: new Tile()
-            })
-            .addDecorator("MaximizeDecorator");
-
-        tileSet.addBox(box);
+        tileSet.addBox(boxxer.createBox({
+            width: "200px",
+            height: "200px",
+            component: new Tile(),
+            decorators: ["MaximizeDecorator"]
+        }));
     }
 
     // add the lot to the frame

@@ -12,15 +12,22 @@
  */
 api.createBox = function createBox(setup) {
 
-    setup = setup || {};
-
-    return new Box(
-            setup.width,
-            setup.height,
-            (setup.parent || setup.container)
+    var config = setup || {};
+    var box = new Box(
+            config.width,
+            config.height,
+            (config.parent || config.container)
         )
-        .setFlowDirection(setup.flow)
-        .setComponent(setup.component);
+        .setFlowDirection(config.flow)
+        .setComponent(config.component);
+
+    if (config.decorators) {
+        config.decorators.forEach(function(decoratorName) {
+            box.addDecorator(decoratorName);
+        });
+    }
+
+    return box;
 };
 /**
  * @param setup {Object} map of settings
