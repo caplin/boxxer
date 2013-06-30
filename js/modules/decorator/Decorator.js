@@ -71,7 +71,7 @@ Decorator.extend = function (prototype) {
     if (typeof decorator.init === "function") {
         decorator.init();
     }
-
+console.log(decorator);
     return decorator;
 };
 

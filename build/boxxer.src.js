@@ -630,7 +630,7 @@ Decorator.extend = function (prototype) {
     if (typeof decorator.init === "function") {
         decorator.init();
     }
-
+console.log(decorator);
     return decorator;
 };
 
@@ -1845,6 +1845,7 @@ BoxRenderer._applyDecorators = function (box) {
     var i = 0;
 
     for (; i < length; i++) {
+        console.log(decorators[i]);
         decorator = Decorator.getDecorator(decorators[i]);
         template = decorator.getTemplate(box);
 
@@ -2219,6 +2220,7 @@ boxxer.createDecorator("BoxHeader", {
         var element = box.getElement();
         element.style.position = "relative";
         element.appendChild(template.getElement());
+        box.height.setMinimumValue(template.getElement().style.height);
     },
 
     //returns custom template
@@ -2233,25 +2235,37 @@ boxxer.createDecorator("BoxHeader", {
         return header;
     }
 });
+boxxer.createDecorator("Drag", {
+
+    engage: function (box, template) {
+        var element = box.getElement();
+        element.setAttribute("draggable", true);
+    }
+});
+boxxer.createDecorator("Drop", {
+
+    engage: function (box, template) {
+
+    }
+});
 boxxer.createDecorator("MaximizeButton", {
 
-    //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
         element.style.position = "relative";
         element.appendChild(template.getElement());
     },
 
-    //returns custom template
     getTemplate: function (box) {
 
         var button = new ElementWrapper(document.createElement("button"));
 
         button
             .html("+")
+            // TODO handle this via CSS using the class
             .css({
                 position: "absolute",
-                right: "5px",
+                right: "27px",
                 top: "5px"
             })
             .addClass("maximize");
@@ -2273,26 +2287,27 @@ boxxer.createDecorator("MaximizeButton", {
 });
 boxxer.createDecorator("MinimizeButton", {
 
-    //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
-        console.log(box);
+
+        // TODO this need to be a custom option
         box.width.setMinimumValue(box.width.getValue());
         box.height.setMinimumValue("40px");
+
         element.style.position = "relative";
         element.appendChild(template.getElement());
     },
 
-    //returns custom template
     getTemplate: function (box) {
 
         var button = new ElementWrapper(document.createElement("button"));
 
         button
             .html("-")
+            // TODO handle this via CSS using the class
             .css({
                 position: "absolute",
-                right: "32px",
+                right: "50px",
                 top: "5px"
             })
             .addClass("minimize");
@@ -2308,6 +2323,33 @@ boxxer.createDecorator("MinimizeButton", {
                 }
             }
         })(box, button));
+
+        return button;
+    }
+});
+boxxer.createDecorator("RemoveButton", {
+
+    engage: function (box, template) {
+        var element = box.getElement();
+        element.style.position = "relative";
+        element.appendChild(template.getElement());
+    },
+
+    getTemplate: function (box) {
+
+        var button = new ElementWrapper(document.createElement("button"));
+
+        button
+            .html("x")
+            // TODO handle this via CSS using the class
+            .css({
+                position: "absolute",
+                right: "5px",
+                top: "5px"
+            })
+            .addClass("remove");
+
+        new DOMEvent(button.getElement()).on("click", box.destroy.bind(box));
 
         return button;
     }

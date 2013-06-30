@@ -5,6 +5,7 @@ boxxer.createDecorator("BoxHeader", {
         var element = box.getElement();
         element.style.position = "relative";
         element.appendChild(template.getElement());
+        box.height.setMinimumValue(template.getElement().style.height);
     },
 
     //returns custom template

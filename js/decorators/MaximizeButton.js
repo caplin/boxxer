@@ -1,22 +1,21 @@
 boxxer.createDecorator("MaximizeButton", {
 
-    //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
         element.style.position = "relative";
         element.appendChild(template.getElement());
     },
 
-    //returns custom template
     getTemplate: function (box) {
 
         var button = new ElementWrapper(document.createElement("button"));
 
         button
             .html("+")
+            // TODO handle this via CSS using the class
             .css({
                 position: "absolute",
-                right: "5px",
+                right: "27px",
                 top: "5px"
             })
             .addClass("maximize");
