@@ -7,6 +7,8 @@
 <style>
     div {  background: rgba(120, 120, 120, 0.25); }
     div:hover { background: rgba(0, 120, 0, 0.25); }
+    div.header {  background: rgba(60, 60, 60, 0.25); }
+    div.blotter {  background: rgba(200, 200, 200, 0.25); }
 
     h1, h2, h3, h4, h5, h6 {
         margin:0;
@@ -26,11 +28,21 @@
         background:#fff;
         cursor:pointer;
     }
+    .header {
+        overflow:hidden;
+    }
+    .tileSet {
+        overflow:auto;
+    }
     .tile {
         margin:10px;
     }
     .tile.maximized {
+        background: #c0ffec;
         margin:0;
+    }
+    .dropTarget {
+        background:lightblue;
     }
 </style>
 <body></body>
@@ -67,10 +79,19 @@
     };
 
     // create our layout
-    var frame = boxxer.createBox();
-    var header = boxxer.createBox().addDecorator("Drop");
-    var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
-    var blotter = boxxer.createBox({height:2}).addDecorator("Drop");
+    var frame = boxxer.createBox({height:"40px"});
+
+    var header = boxxer.createBox()
+        .addDecorator("Drop")
+        .addClass("header");
+
+    var tileSet = boxxer.createBox({height:10, flow:boxxer.Box.FLOW_HORIZONTAL})
+        .addDecorator("Drop")
+        .addClass("tileSet");
+
+    var blotter = boxxer.createBox({height:7})
+        .addDecorator("Drop")
+        .addClass("blotter");
 
     // create a bunch of tiles
     for (var i = 0; i < 10; i++) {
