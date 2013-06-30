@@ -11,7 +11,6 @@ boxxer.createDecorator("Drop", {
 
     onDragEnter : function() {
         Box.dropTarget = this._box;
-        Box._dropTarget = Box.dropTarget.getElement();
     },
 
     onDragLeave : function() {

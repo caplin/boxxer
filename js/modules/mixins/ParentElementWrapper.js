@@ -27,12 +27,13 @@ ParentElementWrapper.prototype.getParentElement = function () {
  * @param parent {HTMLElement} the parent DOM HTMLElementWrapper
  */
 ParentElementWrapper.prototype.setParentElement = function (parent) {
-    var element = this.getElement();
-
-    if (element.parentElement !== parent && this._parentElement !== parent) {
-        this._parentElement = parent;
-        this._parentElement.appendChild(element);
-    }
+    this._parentElement = parent;
+//    var element = this.getElement();
+//
+//    if (element.parentElement !== parent && this._parentElement !== parent) {
+//        this._parentElement = parent;
+//        this._parentElement.appendChild(element);
+//    }
 
     return this;
 };

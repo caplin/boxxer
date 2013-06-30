@@ -31,6 +31,10 @@ api.createBox = function createBox(setup) {
         box.setName(config.name);
     }
 
+    if (config.className) {
+        box.addClass(config.className);
+    }
+
     return box;
 };
 

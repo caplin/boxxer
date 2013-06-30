@@ -1477,12 +1477,13 @@ ParentElementWrapper.prototype.getParentElement = function () {
  * @param parent {HTMLElement} the parent DOM HTMLElementWrapper
  */
 ParentElementWrapper.prototype.setParentElement = function (parent) {
-    var element = this.getElement();
-
-    if (element.parentElement !== parent && this._parentElement !== parent) {
-        this._parentElement = parent;
-        this._parentElement.appendChild(element);
-    }
+    this._parentElement = parent;
+//    var element = this.getElement();
+//
+//    if (element.parentElement !== parent && this._parentElement !== parent) {
+//        this._parentElement = parent;
+//        this._parentElement.appendChild(element);
+//    }
 
     return this;
 };
@@ -2239,20 +2240,22 @@ boxxer.createDecorator("Drag", {
             .on("dragend", this.onDragEnd.bind(this));
     },
 
-    onDragStart: function(event) {
+    onDragStart: function() {
         Box.dragTarget = this._box;
-        Box._dragTarget = Box.dragTarget.getElement();
     },
 
     onDragEnd: function(event) {
+
         event.preventDefault();
-        if (Box._dropTarget && Box._dragTarget) {
-            Box._dropTarget.appendChild(Box._dragTarget);
 
-//            Box.dragTarget.moveTo(Box.dropTarget);
+        if (Box.dropTarget && Box.dragTarget) {
 
-            Box._dropTarget = undefined;
-            Box._dragTarget = undefined;
+            Box.dropTarget.getElement().appendChild(Box.dragTarget.getElement());
+
+            Box.moveBox(Box.dragTarget, Box.getById(Box.dragTarget.getParentElement().getAttribute("data-box-id")), Box.dropTarget);
+
+            Box.dropTarget = undefined;
+            Box.dragTarget = undefined;
         }
     }
 });
@@ -2269,7 +2272,6 @@ boxxer.createDecorator("Drop", {
 
     onDragEnter : function() {
         Box.dropTarget = this._box;
-        Box._dropTarget = Box.dropTarget.getElement();
     },
 
     onDragLeave : function() {
@@ -2843,7 +2845,6 @@ Box._zIndex = 666;
  * @private
  */
 // TODO better solution?
-Box._dropTarget = null;
 Box.dropTarget = null;
 
 /**
@@ -2853,7 +2854,6 @@ Box.dropTarget = null;
  * @private
  */
 // TODO better solution?
-Box._dragTarget = null;
 Box.dragTarget = null;
 
 /**
@@ -2881,6 +2881,20 @@ Box.generateUniqueBoxId = function () {
  */
 Box.removeBox = function (id) {
     delete Box._registry[id];
+};
+
+/**
+ * Move a box from one parent box to another
+ * @param box
+ * @param origin
+ * @param destination
+ */
+Box.moveBox = function(box, origin, destination) {
+    box.setParentElement(destination.getElement());
+    destination.addBox(box);
+    delete origin.getChildren()[box.getId()];
+
+    console.log(box);
 };
 
 /**
@@ -2941,6 +2955,10 @@ api.createBox = function createBox(setup) {
 
     if (config.name) {
         box.setName(config.name);
+    }
+
+    if (config.className) {
+        box.addClass(config.className);
     }
 
     return box;

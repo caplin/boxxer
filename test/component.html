@@ -26,6 +26,9 @@
         background:#fff;
         cursor:pointer;
     }
+    .tile {
+        margin:10px;
+    }
 </style>
 <body></body>
 <script>
@@ -73,6 +76,7 @@
             name: "tile " + i,
             width: "200px",
             height: "200px",
+            className: "tile",
             component: new Tile(),
             decorators: [
                 "MaximizeButton",

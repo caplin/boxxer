@@ -353,7 +353,6 @@ Box._zIndex = 666;
  * @private
  */
 // TODO better solution?
-Box._dropTarget = null;
 Box.dropTarget = null;
 
 /**
@@ -363,7 +362,6 @@ Box.dropTarget = null;
  * @private
  */
 // TODO better solution?
-Box._dragTarget = null;
 Box.dragTarget = null;
 
 /**
@@ -391,6 +389,20 @@ Box.generateUniqueBoxId = function () {
  */
 Box.removeBox = function (id) {
     delete Box._registry[id];
+};
+
+/**
+ * Move a box from one parent box to another
+ * @param box
+ * @param origin
+ * @param destination
+ */
+Box.moveBox = function(box, origin, destination) {
+    box.setParentElement(destination.getElement());
+    destination.addBox(box);
+    delete origin.getChildren()[box.getId()];
+
+    console.log(box);
 };
 
 /**

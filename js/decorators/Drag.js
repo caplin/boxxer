@@ -12,20 +12,22 @@ boxxer.createDecorator("Drag", {
             .on("dragend", this.onDragEnd.bind(this));
     },
 
-    onDragStart: function(event) {
+    onDragStart: function() {
         Box.dragTarget = this._box;
-        Box._dragTarget = Box.dragTarget.getElement();
     },
 
     onDragEnd: function(event) {
+
         event.preventDefault();
-        if (Box._dropTarget && Box._dragTarget) {
-            Box._dropTarget.appendChild(Box._dragTarget);
 
-//            Box.dragTarget.moveTo(Box.dropTarget);
+        if (Box.dropTarget && Box.dragTarget) {
 
-            Box._dropTarget = undefined;
-            Box._dragTarget = undefined;
+            Box.dropTarget.getElement().appendChild(Box.dragTarget.getElement());
+
+            Box.moveBox(Box.dragTarget, Box.getById(Box.dragTarget.getParentElement().getAttribute("data-box-id")), Box.dropTarget);
+
+            Box.dropTarget = undefined;
+            Box.dragTarget = undefined;
         }
     }
 });
