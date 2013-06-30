@@ -13,13 +13,18 @@
 
     // Tile component
     var Tile = function() {
-        this.element = document.createElement("div");
-        this.element.innerHTML = "<p>Tile</p>";
+        this._element = document.createElement("div");
+        this._element.innerHTML = "<p>Tile</p>";
     };
 
     // implements Component and LifeCycle interfaces
     boxxer.mix(Tile, boxxer.Component);
     boxxer.mix(Tile, boxxer.LifeCycle);
+
+    // throw an error if not implemented
+    Tile.prototype.getElement = function() {
+        return this._element;
+    };
 
     Tile.prototype.onOpen = function(box) {
         console.log("tile", box.getId());

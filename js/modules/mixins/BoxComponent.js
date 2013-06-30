@@ -22,6 +22,7 @@ BoxComponent.prototype.setComponent = function (component) {
 
     if (component) {
         this.component = component;
+        this.getElement().appendChild(component.getElement());
     }
 
     return this;
