@@ -218,7 +218,6 @@ ElementWrapper.prototype.maximize = function () {
  * Minimize the visual representation of the Box instance
  */
 ElementWrapper.prototype.minimize = function () {
-    console.log(this.width.getMinimumValue(), this.height.getMinimumValue());
     this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     BoxComponent.minimize(this);
     this.emit(EventEmitter.ON_MINIMIZE);

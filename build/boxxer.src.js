@@ -630,7 +630,7 @@ Decorator.extend = function (prototype) {
     if (typeof decorator.init === "function") {
         decorator.init();
     }
-console.log(decorator);
+    
     return decorator;
 };
 
@@ -1434,7 +1434,6 @@ ElementWrapper.prototype.maximize = function () {
  * Minimize the visual representation of the Box instance
  */
 ElementWrapper.prototype.minimize = function () {
-    console.log(this.width.getMinimumValue(), this.height.getMinimumValue());
     this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     BoxComponent.minimize(this);
     this.emit(EventEmitter.ON_MINIMIZE);
@@ -1845,7 +1844,6 @@ BoxRenderer._applyDecorators = function (box) {
     var i = 0;
 
     for (; i < length; i++) {
-        console.log(decorators[i]);
         decorator = Decorator.getDecorator(decorators[i]);
         template = decorator.getTemplate(box);
 

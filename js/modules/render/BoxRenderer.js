@@ -88,7 +88,6 @@ BoxRenderer._applyDecorators = function (box) {
     var i = 0;
 
     for (; i < length; i++) {
-        console.log(decorators[i]);
         decorator = Decorator.getDecorator(decorators[i]);
         template = decorator.getTemplate(box);
 
