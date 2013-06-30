@@ -251,7 +251,7 @@ Box.prototype.removeChild = function (name) {
 /**
  * Render the box and its children to the document
  */
-Box.prototype.render = function () {
+Box.prototype.render = function (autoResize) {
     var parent = this.getParentElement();
     var boxId = parent.getAttribute("data-box-id");
     var parentBox = Box.getById(boxId);
@@ -269,6 +269,12 @@ Box.prototype.render = function () {
         eventType = EventEmitter.ON_UPDATE;
     } else {
         this.isRendered = true;
+    }
+
+    if (autoResize) {
+        new DOMEvent(window).on("resize", function() {
+            this.render();
+        }.bind(this));
     }
 
     this.emit(eventType);

@@ -83,13 +83,11 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
         tileSet.addBox(box);
     }
 
-    // add
+    // add the lot to the frame
     frame.addBox(header).addBox(tileSet).addBox(blotter);
 
+    // render the frame
     frame.render();
-    window.onresize = function () {
-        frame.render();
-    };
 
 ```
 

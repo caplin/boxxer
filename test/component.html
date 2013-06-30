@@ -57,12 +57,10 @@
         tileSet.addBox(box);
     }
 
-    // add
+    // add the lot to the frame
     frame.addBox(header).addBox(tileSet).addBox(blotter);
 
-    frame.render();
-    window.onresize = function () {
-        frame.render();
-    };
+    // render the frame
+    frame.render(true);
 </script>
 </html>

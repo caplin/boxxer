@@ -728,6 +728,62 @@ BoxEvent.prototype.isMuted = function () {
  */
 BoxEvent._id = 0;
 
+exports.DOMEvent = DOMEvent;
+
+/**
+ * class to simplify DOm event binding
+ * @param element {HTMLElement}
+ * @constructor
+ */
+function DOMEvent(element) {
+    this._element = element;
+    this._callback = {};
+    return this;
+}
+
+/**
+ * Bind an event
+ * @param eventType
+ * @param callback
+ */
+DOMEvent.prototype.on = function(eventType, callback) {
+    this._callback[eventType] = callback;
+    this._eventType = eventType;
+    DOMEvent.addListener(this._element, this._eventType, this._callback[eventType]);
+    return this;
+};
+
+/**
+ * Unbind an event
+ */
+DOMEvent.prototype.off = function(eventType) {
+    if (this._callback) {
+        DOMEvent.removeListener(this._element, this._eventType, this._callback[eventType]);
+    }
+    return this;
+};
+
+DOMEvent._div = document.createElement('div');
+
+/**
+ * static bind event method
+ * @param element
+ * @param eventType
+ * @param callback
+ */
+DOMEvent.addListener = function(element, eventType, callback) {
+    element.addEventListener(eventType, callback, false);
+};
+
+/**
+ * static unbind event method
+ * @param element
+ * @param eventType
+ * @param callback
+ */
+DOMEvent.removeListener = function(element, eventType, callback) {
+    element.removeEventListener(eventType, callback, false);
+};
 exports.EventEmitter = EventEmitter;
 
 /**
@@ -2206,6 +2262,7 @@ function Dialog(width, height, left, right) {
     var element = this.getElement();
     element.setAttribute("class", "boxxer-Dialog");
     element.style.position = "absolute";
+    element.style.zIndex = Box.getZIndex();
 
     renderer.appendChild(element);
     renderer.removeChild(element);
@@ -2548,7 +2605,7 @@ Box.prototype.removeChild = function (name) {
 /**
  * Render the box and its children to the document
  */
-Box.prototype.render = function () {
+Box.prototype.render = function (autoResize) {
     var parent = this.getParentElement();
     var boxId = parent.getAttribute("data-box-id");
     var parentBox = Box.getById(boxId);
@@ -2566,6 +2623,12 @@ Box.prototype.render = function () {
         eventType = EventEmitter.ON_UPDATE;
     } else {
         this.isRendered = true;
+    }
+
+    if (autoResize) {
+        new DOMEvent(window).on("resize", function() {
+            this.render();
+        }.bind(this));
     }
 
     this.emit(eventType);
