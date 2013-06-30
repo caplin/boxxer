@@ -1247,9 +1247,7 @@ ElementWrapper.prototype._setElementHeight = function (height) {
  * @private
  */
 ElementWrapper.prototype.setElementDimension = function (width, height) {
-    this._setElementWidth(width);
-    this._setElementHeight(height);
-    return this;
+    return this._setElementWidth(width)._setElementHeight(height);
 };
 
 /**
@@ -1291,7 +1289,7 @@ ElementWrapper.prototype.removeClass = function (className) {
         }
     });
 
-    return this.getElement().setAttribute("class", keep.join(" "));;
+    return this.getElement().setAttribute("class", keep.join(" "));
 };
 
 /**
