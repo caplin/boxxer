@@ -1289,7 +1289,8 @@ ElementWrapper.prototype.removeClass = function (className) {
         }
     });
 
-    return this.getElement().setAttribute("class", keep.join(" "));
+    this.getElement().setAttribute("class", keep.join(" "));
+    return this;
 };
 
 /**
