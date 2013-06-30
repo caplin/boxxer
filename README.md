@@ -117,9 +117,6 @@ frame.setName("myLayout");
 // store the layout
 frame.saveLayout();
 
-// retrieve a layout
-frame.getLayout();
-
 ```
 
 Retrieve a layout
