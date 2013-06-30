@@ -123,7 +123,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_VERTICAL);
-    BoxComponent.flowChange(this);
+    BoxComponent.reflow(this);
     return this;
 };
 

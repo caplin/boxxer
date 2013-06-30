@@ -556,7 +556,7 @@ LifeCycle.prototype.onDeactivate = function(box) {};
  *
  * @param box {Box}
  */
-LifeCycle.prototype.onFlowChange = function(box) {};
+LifeCycle.prototype.onReflow = function(box) {};
 exports.Decorator = Decorator;
 
 /**
@@ -755,6 +755,8 @@ DOMEvent.prototype.on = function(eventType, callback) {
 
 /**
  * Unbind an event
+ * @param eventType
+ * @returns {*}
  */
 DOMEvent.prototype.off = function(eventType) {
     if (this._callback) {
@@ -896,7 +898,6 @@ EventEmitter.prototype.emit = function () {
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onOpen is a component is present
 EventEmitter.ON_RENDER = "render";
 
 /**
@@ -904,7 +905,6 @@ EventEmitter.ON_RENDER = "render";
  * @static
  * @type {String}
  */
-// TODO Add LifeCycle equivalent
 EventEmitter.ON_UPDATE = "update";
 
 /**
@@ -912,7 +912,6 @@ EventEmitter.ON_UPDATE = "update";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onShow
 EventEmitter.ON_SHOW = "show";
 
 /**
@@ -920,7 +919,6 @@ EventEmitter.ON_SHOW = "show";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onHide
 EventEmitter.ON_HIDE = "hide";
 
 /**
@@ -928,7 +926,6 @@ EventEmitter.ON_HIDE = "hide";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onResize
 EventEmitter.ON_RESIZE = "resize";
 
 /**
@@ -936,15 +933,13 @@ EventEmitter.ON_RESIZE = "resize";
  * @static
  * @type {String}
  */
-// TODO Add LifeCycle equivalent
-EventEmitter.ON_FLOW = "flow";
+EventEmitter.ON_REFLOW = "flow";
 
 /**
  * Fired when the box gain focus
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onActivate
 EventEmitter.ON_FOCUS = "focus";
 
 /**
@@ -952,16 +947,13 @@ EventEmitter.ON_FOCUS = "focus";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onDeactivate
-EventEmitter.ON_FOCUS = "blur";
+EventEmitter.ON_BLUR = "blur";
 
 /**
  * Fired when the box is restored
  * @static
  * @type {String}
  */
-// TODO Implement restore
-// TODO Link to LifeCycle#onRestore
 EventEmitter.ON_RESTORE = "restore";
 
 /**
@@ -969,8 +961,6 @@ EventEmitter.ON_RESTORE = "restore";
  * @static
  * @type {String}
  */
-// TODO implemement minimize
-// TODO Link to LifeCycle#onDeactivate
 EventEmitter.ON_MINIMIZE = "minimize";
 
 /**
@@ -978,8 +968,6 @@ EventEmitter.ON_MINIMIZE = "minimize";
  * @static
  * @type {String}
  */
-// TODO implement maximize
-// TODO Link to LifeCycle#onDeactivate
 EventEmitter.ON_MAXIMIZE = "maximize";
 
 exports.Layout = Layout;
@@ -1149,7 +1137,6 @@ BoxComponent.render = function (box) {
  * Invokes a onEvent method on a component if it is present
  * @param methodName {String} Method name to invoke on the component
  * @param box {Box}
- * @param [args] {Array} Optional array of arguments to pass to the method being invoked
  */
 BoxComponent.invoke = function(methodName, box) {
     var component = box.getComponent();
@@ -1175,8 +1162,8 @@ BoxComponent.destroy = function (box) {
  * @param box
  * @returns {*}
  */
-BoxComponent.flowChange = function(box) {
-    return BoxComponent.invoke("onFlowChange", box);
+BoxComponent.reflow = function(box) {
+    return BoxComponent.invoke("onReflow", box);
 };
 
 /**
@@ -1418,6 +1405,7 @@ ElementWrapper.prototype.maximize = function () {
     element.style.zIndex = Box.getZIndex();
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
+    this.emit(EventEmitter.ON_MAXIMIZE);
     return this;
 };
 
@@ -1427,6 +1415,7 @@ ElementWrapper.prototype.maximize = function () {
 ElementWrapper.prototype.minimize = function () {
     this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     BoxComponent.minimize(this);
+    this.emit(EventEmitter.ON_MINIMIZE);
     return this;
 };
 
@@ -1441,6 +1430,7 @@ ElementWrapper.prototype.restore = function () {
     element.style.zIndex = "auto";
     this.setElementDimension(this.width.getValue(), this.height.getValue());
     BoxComponent.restore(this);
+    this.emit(EventEmitter.ON_RESTORE);
     return this;
 };
 
@@ -2477,7 +2467,7 @@ Box.prototype.getFlowDirection = function () {
  */
 Box.prototype.setFlowDirection = function (flowDirection) {
     this._flowDirection = (flowDirection || Box.FLOW_VERTICAL);
-    BoxComponent.flowChange(this);
+    BoxComponent.reflow(this);
     return this;
 };
 

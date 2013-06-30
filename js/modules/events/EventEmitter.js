@@ -110,7 +110,6 @@ EventEmitter.prototype.emit = function () {
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onOpen is a component is present
 EventEmitter.ON_RENDER = "render";
 
 /**
@@ -118,7 +117,6 @@ EventEmitter.ON_RENDER = "render";
  * @static
  * @type {String}
  */
-// TODO Add LifeCycle equivalent
 EventEmitter.ON_UPDATE = "update";
 
 /**
@@ -126,7 +124,6 @@ EventEmitter.ON_UPDATE = "update";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onShow
 EventEmitter.ON_SHOW = "show";
 
 /**
@@ -134,7 +131,6 @@ EventEmitter.ON_SHOW = "show";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onHide
 EventEmitter.ON_HIDE = "hide";
 
 /**
@@ -142,7 +138,6 @@ EventEmitter.ON_HIDE = "hide";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onResize
 EventEmitter.ON_RESIZE = "resize";
 
 /**
@@ -150,15 +145,13 @@ EventEmitter.ON_RESIZE = "resize";
  * @static
  * @type {String}
  */
-// TODO Add LifeCycle equivalent
-EventEmitter.ON_FLOW = "flow";
+EventEmitter.ON_REFLOW = "flow";
 
 /**
  * Fired when the box gain focus
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onActivate
 EventEmitter.ON_FOCUS = "focus";
 
 /**
@@ -166,16 +159,13 @@ EventEmitter.ON_FOCUS = "focus";
  * @static
  * @type {String}
  */
-// TODO Link to LifeCycle#onDeactivate
-EventEmitter.ON_FOCUS = "blur";
+EventEmitter.ON_BLUR = "blur";
 
 /**
  * Fired when the box is restored
  * @static
  * @type {String}
  */
-// TODO Implement restore
-// TODO Link to LifeCycle#onRestore
 EventEmitter.ON_RESTORE = "restore";
 
 /**
@@ -183,8 +173,6 @@ EventEmitter.ON_RESTORE = "restore";
  * @static
  * @type {String}
  */
-// TODO implemement minimize
-// TODO Link to LifeCycle#onDeactivate
 EventEmitter.ON_MINIMIZE = "minimize";
 
 /**
@@ -192,6 +180,4 @@ EventEmitter.ON_MINIMIZE = "minimize";
  * @static
  * @type {String}
  */
-// TODO implement maximize
-// TODO Link to LifeCycle#onDeactivate
 EventEmitter.ON_MAXIMIZE = "maximize";

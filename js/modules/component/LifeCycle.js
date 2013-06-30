@@ -110,4 +110,4 @@ LifeCycle.prototype.onDeactivate = function(box) {};
  *
  * @param box {Box}
  */
-LifeCycle.prototype.onFlowChange = function(box) {};
+LifeCycle.prototype.onReflow = function(box) {};

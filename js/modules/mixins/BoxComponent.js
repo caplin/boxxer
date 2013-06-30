@@ -50,7 +50,6 @@ BoxComponent.render = function (box) {
  * Invokes a onEvent method on a component if it is present
  * @param methodName {String} Method name to invoke on the component
  * @param box {Box}
- * @param [args] {Array} Optional array of arguments to pass to the method being invoked
  */
 BoxComponent.invoke = function(methodName, box) {
     var component = box.getComponent();
@@ -76,8 +75,8 @@ BoxComponent.destroy = function (box) {
  * @param box
  * @returns {*}
  */
-BoxComponent.flowChange = function(box) {
-    return BoxComponent.invoke("onFlowChange", box);
+BoxComponent.reflow = function(box) {
+    return BoxComponent.invoke("onReflow", box);
 };
 
 /**

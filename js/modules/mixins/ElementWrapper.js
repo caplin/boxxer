@@ -192,6 +192,7 @@ ElementWrapper.prototype.maximize = function () {
     element.style.zIndex = Box.getZIndex();
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
+    this.emit(EventEmitter.ON_MAXIMIZE);
     return this;
 };
 
@@ -201,6 +202,7 @@ ElementWrapper.prototype.maximize = function () {
 ElementWrapper.prototype.minimize = function () {
     this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     BoxComponent.minimize(this);
+    this.emit(EventEmitter.ON_MINIMIZE);
     return this;
 };
 
@@ -215,5 +217,6 @@ ElementWrapper.prototype.restore = function () {
     element.style.zIndex = "auto";
     this.setElementDimension(this.width.getValue(), this.height.getValue());
     BoxComponent.restore(this);
+    this.emit(EventEmitter.ON_RESTORE);
     return this;
 };
