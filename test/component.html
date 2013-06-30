@@ -45,7 +45,7 @@
     };
 
     Tile.prototype.onOpen = function(box) {
-        console.log("tile", box.getId());
+//        console.log("tile", box.getId());
     };
 
     Tile.prototype.onRestore = function(box) {
@@ -62,14 +62,15 @@
 
     // create our layout
     var frame = boxxer.createBox();
-    var header = boxxer.createBox();
+    var header = boxxer.createBox().addDecorator("Drop");
     var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
-    var blotter = boxxer.createBox({height:2});
+    var blotter = boxxer.createBox({height:2}).addDecorator("Drop");
 
     // create a bunch of tiles
     for (var i = 0; i < 10; i++) {
 
         tileSet.addBox(boxxer.createBox({
+            name: "tile " + i,
             width: "200px",
             height: "200px",
             component: new Tile(),

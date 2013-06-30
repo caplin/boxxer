@@ -49,7 +49,7 @@ Decorator.isRegistered = function (decoratorName) {
  * @returns {Decorator}
  */
 Decorator.getDecorator = function (decoratorName) {
-    return Decorator.registry[decoratorName];
+    return Decorator.extend(Decorator.registry[decoratorName]);
 };
 
 /**
@@ -82,15 +82,7 @@ Decorator.extend = function (prototype) {
  * @returns {Decorator|undefined}
  */
 Decorator.register = function (name, prototype) {
-    var registry = Decorator.registry;
-    var decorator;
-
-    if (name !== '' && !registry.hasOwnProperty(name)) {
-        decorator = Decorator.extend(prototype);
-        registry[name] = decorator;
-    }
-
-    return decorator;
+    Decorator.registry[name] = prototype;
 };
 
 exports.createDecorator = Decorator.register;

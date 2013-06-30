@@ -347,6 +347,26 @@ Box._id = 0;
 Box._zIndex = 666;
 
 /**
+ * @beta
+ * Used by decorator to track which box is the current dropTarget
+ * @type {null}
+ * @private
+ */
+// TODO better solution?
+Box._dropTarget = null;
+Box.dropTarget = null;
+
+/**
+ * @beta
+ * Used by decorator to track which box is the current dragTarget
+ * @type {null}
+ * @private
+ */
+// TODO better solution?
+Box._dragTarget = null;
+Box.dragTarget = null;
+
+/**
  * Return the current zIndex and increase it
  * @returns {number}
  */

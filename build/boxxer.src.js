@@ -608,7 +608,7 @@ Decorator.isRegistered = function (decoratorName) {
  * @returns {Decorator}
  */
 Decorator.getDecorator = function (decoratorName) {
-    return Decorator.registry[decoratorName];
+    return Decorator.extend(Decorator.registry[decoratorName]);
 };
 
 /**
@@ -630,7 +630,7 @@ Decorator.extend = function (prototype) {
     if (typeof decorator.init === "function") {
         decorator.init();
     }
-    
+
     return decorator;
 };
 
@@ -641,15 +641,7 @@ Decorator.extend = function (prototype) {
  * @returns {Decorator|undefined}
  */
 Decorator.register = function (name, prototype) {
-    var registry = Decorator.registry;
-    var decorator;
-
-    if (name !== '' && !registry.hasOwnProperty(name)) {
-        decorator = Decorator.extend(prototype);
-        registry[name] = decorator;
-    }
-
-    return decorator;
+    Decorator.registry[name] = prototype;
 };
 
 exports.createDecorator = Decorator.register;
@@ -2227,7 +2219,7 @@ boxxer.createDecorator("BoxHeader", {
         var header = new ElementWrapper(document.createElement("h5"));
 
         header
-            .html(box.getId())
+            .html(box.getName() || box.getId())
             .addClass("boxHeader");
 
         return header;
@@ -2235,14 +2227,52 @@ boxxer.createDecorator("BoxHeader", {
 });
 boxxer.createDecorator("Drag", {
 
-    engage: function (box, template) {
+    engage: function (box) {
+
         var element = box.getElement();
         element.setAttribute("draggable", true);
+
+        this._box = box;
+
+        new DOMEvent(element)
+            .on("dragstart", this.onDragStart.bind(this))
+            .on("dragend", this.onDragEnd.bind(this));
+    },
+
+    onDragStart: function(event) {
+        Box.dragTarget = this._box;
+        Box._dragTarget = Box.dragTarget.getElement();
+    },
+
+    onDragEnd: function(event) {
+        event.preventDefault();
+        if (Box._dropTarget && Box._dragTarget) {
+            Box._dropTarget.appendChild(Box._dragTarget);
+
+//            Box.dragTarget.moveTo(Box.dropTarget);
+
+            Box._dropTarget = undefined;
+            Box._dragTarget = undefined;
+        }
     }
 });
 boxxer.createDecorator("Drop", {
 
-    engage: function (box, template) {
+    engage: function (box) {
+
+        this._box = box;
+
+        new DOMEvent(box.getElement())
+            .on("dragenter", this.onDragEnter.bind(this))
+            .on("dragleave", this.onDragLeave.bind(this));
+    },
+
+    onDragEnter : function() {
+        Box.dropTarget = this._box;
+        Box._dropTarget = Box.dropTarget.getElement();
+    },
+
+    onDragLeave : function() {
 
     }
 });
@@ -2807,6 +2837,26 @@ Box._id = 0;
 Box._zIndex = 666;
 
 /**
+ * @beta
+ * Used by decorator to track which box is the current dropTarget
+ * @type {null}
+ * @private
+ */
+// TODO better solution?
+Box._dropTarget = null;
+Box.dropTarget = null;
+
+/**
+ * @beta
+ * Used by decorator to track which box is the current dragTarget
+ * @type {null}
+ * @private
+ */
+// TODO better solution?
+Box._dragTarget = null;
+Box.dragTarget = null;
+
+/**
  * Return the current zIndex and increase it
  * @returns {number}
  */
@@ -2889,8 +2939,13 @@ api.createBox = function createBox(setup) {
         });
     }
 
+    if (config.name) {
+        box.setName(config.name);
+    }
+
     return box;
 };
+
 /**
  * @param setup {Object} map of settings
  *

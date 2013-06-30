@@ -14,7 +14,7 @@ boxxer.createDecorator("BoxHeader", {
         var header = new ElementWrapper(document.createElement("h5"));
 
         header
-            .html(box.getId())
+            .html(box.getName() || box.getId())
             .addClass("boxHeader");
 
         return header;

@@ -27,8 +27,13 @@ api.createBox = function createBox(setup) {
         });
     }
 
+    if (config.name) {
+        box.setName(config.name);
+    }
+
     return box;
 };
+
 /**
  * @param setup {Object} map of settings
  *
