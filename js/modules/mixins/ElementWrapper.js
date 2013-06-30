@@ -133,6 +133,8 @@ ElementWrapper.prototype.css = function(properties) {
     for (prop in properties) {
         element.style[prop] = properties[prop];
     }
+
+    return this;
 };
 
 /**

@@ -40,7 +40,6 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
     // Tile component
     var Tile = function() {
         this._element = document.createElement("div");
-        this._element.innerHTML = "<p>Tile</p>";
     };
 
     // implements Component and LifeCycle interfaces
@@ -64,6 +63,10 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
         console.log("tile maximized", box.getId());
     };
 
+    Tile.prototype.onMinimize = function(box) {
+        console.log("tile minimized", box.getId());
+    };
+
     // create our layout
     var frame = boxxer.createBox();
     var header = boxxer.createBox();
@@ -77,7 +80,11 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
             width: "200px",
             height: "200px",
             component: new Tile(),
-            decorators: ["MaximizeDecorator"]
+            decorators: [
+                "BoxHeader",
+                "MaximizeButton",
+                "MinimizeButton"
+            ]
         }));
     }
 

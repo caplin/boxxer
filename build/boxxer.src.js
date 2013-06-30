@@ -1349,6 +1349,8 @@ ElementWrapper.prototype.css = function(properties) {
     for (prop in properties) {
         element.style[prop] = properties[prop];
     }
+
+    return this;
 };
 
 /**
@@ -2200,90 +2202,99 @@ ViewContainer.prototype.destroy = function () {
 ViewContainer.prototype.serialize = function () {
     return '\"\"';
 };
-boxxer.createDecorator("HeaderDecorator", {
+boxxer.createDecorator("BoxHeader", {
+
     //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
         element.style.position = "relative";
-        element.appendChild(template);
+        element.appendChild(template.getElement());
     },
+
     //returns custom template
     getTemplate: function (box) {
-        var h5 = document.createElement("h5"),
-            header = document.createElement("div");
 
-        header.setAttribute("class", "HeaderDecorator");
-        header.innerHTML = box.getId();
-        header.style.position = "absolute";
-        header.style.left = "0px";
-        header.style.top = "0px";
+        var header = new ElementWrapper(document.createElement("h5"));
+
+        header
+            .html(box.getId())
+            .addClass("boxHeader");
 
         return header;
     }
 });
-boxxer.createDecorator("MaximizeDecorator", {
+boxxer.createDecorator("MaximizeButton", {
 
     //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
         element.style.position = "relative";
-        element.appendChild(template);
+        element.appendChild(template.getElement());
     },
 
     //returns custom template
     getTemplate: function (box) {
-        var button = document.createElement("button");
 
-        button.innerHTML = "+";
-        button.style.position = "absolute";
-        button.style.right = "5px";
-        button.style.top = "5px";
+        var button = new ElementWrapper(document.createElement("button"));
 
-        button.onclick =(function(box){
+        button
+            .html("+")
+            .css({
+                position: "absolute",
+                right: "5px",
+                top: "5px"
+            })
+            .addClass("maximize");
+
+        new DOMEvent(button.getElement()).on("click", (function(box, button){
             return function() {
-                if (button.innerHTML === "+") {
+                if (button.html() === "+") {
                     box.maximize();
-                    button.innerHTML = "~";
+                    button.html("~");
                 } else {
                     box.restore();
-                    button.innerHTML = "+";
+                    button.html("+");
                 }
             }
-        })(box);
+        })(box, button));
 
         return button;
     }
 });
-boxxer.createDecorator("MinimizeDecorator", {
+boxxer.createDecorator("MinimizeButton", {
 
     //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
         element.style.position = "relative";
-        element.appendChild(template);
+        element.appendChild(template.getElement());
     },
 
     //returns custom template
     getTemplate: function (box) {
-        var button = document.createElement("button");
 
-        button.setAttribute("class", "MinimizeDecorator");
-        button.innerHTML = "-";
-        button.style.position = "absolute";
-        button.style.right = "32px";
-        button.style.top = "5px";
+        var button = new ElementWrapper(document.createElement("button"));
 
-        button.onclick =(function(box){
+        button
+            .html("-")
+            .css({
+                position: "absolute",
+                right: "32px",
+                top: "5px"
+            })
+            .addClass("minimize");
+
+        new DOMEvent(button.getElement()).on("click", (function(box, button){
             return function() {
-                if (button.innerHTML === "-") {
+                if (button.html() === "-") {
                     box.minimize();
-                    button.innerHTML = "~";
+                    button.html("~");
                 } else {
                     box.restore();
-                    button.innerHTML = "-";
+                    button.html("-");
                 }
             }
-        })(box);
+        })(box, button));
 
         return button;
     }
