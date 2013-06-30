@@ -29,46 +29,67 @@ Node with npm required. Use npm to install grunt and then just run ```npm instal
 
 If adding file make sure to update the Gruntfile.js!
 
-## Usage
+## Documentation
 
-### Using the API
+See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the documentation directory everything is documented using jsdoc.
 
-See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") for more information
-
-### Using classes directly
+## Example
 
 ```javascript
 
-var tiles = [];
-var frame = new boxxer.Box("foo");
+    // Tile component
+    var Tile = function() {
+        this._element = document.createElement("div");
+        this._element.innerHTML = "<p>Tile</p>";
+    };
 
-var header = new boxxer.Box();
-var tileSet = new boxxer.Box(50, 50);
-var blotter = new boxxer.Box(20, 20);
+    // implements Component and LifeCycle interfaces
+    boxxer.mix(Tile, boxxer.Component);
+    boxxer.mix(Tile, boxxer.LifeCycle);
 
-tileSet.setFlowDirection(boxxer.Box.FLOW_HORIZONTAL);
+    // throw an error if not implemented
+    Tile.prototype.getElement = function() {
+        return this._element;
+    };
 
-header.addClass("header");
-tileSet.addClass("tileSet");
-blotter.addClass("blotter");
+    Tile.prototype.onOpen = function(box) {
+        console.log("tile", box.getId());
+    };
 
-for (var i = 0; i < 10; i++) {
-    var box = new boxxer.Box("200px", "200px");
-    new Tile(box);
-    tileSet.addBox(box);
-    tiles.push(box);
-}
+    Tile.prototype.onRestore = function(box) {
+        console.log("tile restored", box.getId());
+    };
 
-frame.addBox(header);
-frame.addBox(tileSet);
-frame.addBox(blotter);
+    Tile.prototype.onMaximize = function(box) {
+        console.log("tile maximized", box.getId());
+    };
 
-window.onload = function () {
+    // create our layout
+    var frame = boxxer.createBox().setName("myLayout");
+    var header = boxxer.createBox().addClass("header");
+    var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
+    var blotter = boxxer.createBox({height:2}).addClass("blotter");
+
+    // create a bunch of tiles
+    for (var i = 0; i < 10; i++) {
+
+        var box = boxxer.createBox({
+                width: "200px",
+                height: "200px",
+                component: new Tile()
+            })
+            .addDecorator("MaximizeDecorator");
+
+        tileSet.addBox(box);
+    }
+
+    // add
+    frame.addBox(header).addBox(tileSet).addBox(blotter);
+
     frame.render();
     window.onresize = function () {
         frame.render();
     };
-};
 
 ```
 
