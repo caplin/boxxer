@@ -1107,9 +1107,12 @@ function BoxComponent(component) {
  */
 BoxComponent.prototype.setComponent = function (component) {
 
+    var element =  this.getElement();
+
     if (component) {
         this.component = component;
-        this.getElement().appendChild(component.getElement());
+        element.appendChild(component.getElement());
+        this.component.setContainer(element);
     }
 
     return this;
@@ -1216,14 +1219,15 @@ exports.ElementWrapper = ElementWrapper;
 /**
  * @name ElementWrapper
  * @constructor
+ * @param [element] {HTMLElement} Optional so that the class can be used by others
  */
-function ElementWrapper() {
+function ElementWrapper(element) {
     /**
      * the HTMLElement of the Box instance - DOM
      * @private
      * @type {HTMLDivElement}
      */
-    this._element = document.createElement("div");
+    this._element = element || document.createElement("div");
 }
 
 /**
@@ -1334,6 +1338,20 @@ ElementWrapper.prototype.setDataAttribute = function (attribute, value) {
 };
 
 /**
+ * Set multiple properties on an element
+ * @param properties
+ */
+ElementWrapper.prototype.css = function(properties) {
+
+    var element = this.getElement();
+    var prop;
+
+    for (prop in properties) {
+        element.style[prop] = properties[prop];
+    }
+};
+
+/**
  * sets or returns the text content of the Box instance
  * @param text {String} name of the attribute
  * @return {String|undefined}
@@ -1398,11 +1416,12 @@ ElementWrapper.prototype.toggle = function () {
  * Maximize the visual representation of the Box instance
  */
 ElementWrapper.prototype.maximize = function () {
-    var element = this.getElement();
-    element.style.position = "absolute";
-    element.style.left = "0";
-    element.style.top = "0";
-    element.style.zIndex = Box.getZIndex();
+    this.css({
+        position: "absolute",
+        left: "0",
+        top: "0",
+        zIndex: Box.getZIndex()
+    });
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
     this.emit(EventEmitter.ON_MAXIMIZE);
@@ -1423,11 +1442,12 @@ ElementWrapper.prototype.minimize = function () {
  * Restore the visual representation of the Box instance to its original configuration
  */
 ElementWrapper.prototype.restore = function () {
-    var element = this.getElement();
-    element.style.position = "relative";
-    element.style.left = "auto";
-    element.style.top = "auto";
-    element.style.zIndex = "auto";
+    this.css({
+        position: "relative",
+        left: "auto",
+        top: "auto",
+        zIndex: "auto"
+    });
     this.setElementDimension(this.width.getValue(), this.height.getValue());
     BoxComponent.restore(this);
     this.emit(EventEmitter.ON_RESTORE);
@@ -2186,13 +2206,11 @@ boxxer.createDecorator("HeaderDecorator", {
         var element = box.getElement();
         element.style.position = "relative";
         element.appendChild(template);
-
-        console.log(element);
     },
     //returns custom template
     getTemplate: function (box) {
         var h5 = document.createElement("h5"),
-            header = document.createElement("header");
+            header = document.createElement("div");
 
         header.setAttribute("class", "HeaderDecorator");
         header.innerHTML = box.getId();
@@ -2218,8 +2236,8 @@ boxxer.createDecorator("MaximizeDecorator", {
 
         button.innerHTML = "+";
         button.style.position = "absolute";
-        button.style.right = "10px";
-        button.style.top = "10px";
+        button.style.right = "5px";
+        button.style.top = "5px";
 
         button.onclick =(function(box){
             return function() {
@@ -2229,6 +2247,40 @@ boxxer.createDecorator("MaximizeDecorator", {
                 } else {
                     box.restore();
                     button.innerHTML = "+";
+                }
+            }
+        })(box);
+
+        return button;
+    }
+});
+boxxer.createDecorator("MinimizeDecorator", {
+
+    //engages custom template for Box
+    engage: function (box, template) {
+        var element = box.getElement();
+        element.style.position = "relative";
+        element.appendChild(template);
+    },
+
+    //returns custom template
+    getTemplate: function (box) {
+        var button = document.createElement("button");
+
+        button.setAttribute("class", "MinimizeDecorator");
+        button.innerHTML = "-";
+        button.style.position = "absolute";
+        button.style.right = "32px";
+        button.style.top = "5px";
+
+        button.onclick =(function(box){
+            return function() {
+                if (button.innerHTML === "-") {
+                    box.minimize();
+                    button.innerHTML = "~";
+                } else {
+                    box.restore();
+                    button.innerHTML = "-";
                 }
             }
         })(box);

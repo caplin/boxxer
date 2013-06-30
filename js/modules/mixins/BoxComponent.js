@@ -20,9 +20,12 @@ function BoxComponent(component) {
  */
 BoxComponent.prototype.setComponent = function (component) {
 
+    var element =  this.getElement();
+
     if (component) {
         this.component = component;
-        this.getElement().appendChild(component.getElement());
+        element.appendChild(component.getElement());
+        this.component.setContainer(element);
     }
 
     return this;

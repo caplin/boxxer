@@ -38,6 +38,10 @@
         console.log("tile maximized", box.getId());
     };
 
+    Tile.prototype.onMinimize = function(box) {
+        console.log("tile minimized", box.getId());
+    };
+
     // create our layout
     var frame = boxxer.createBox();
     var header = boxxer.createBox();
@@ -51,7 +55,10 @@
             width: "200px",
             height: "200px",
             component: new Tile(),
-            decorators: ["MaximizeDecorator"]
+            decorators: [
+                "MaximizeDecorator",
+                "MinimizeDecorator"
+            ]
         }));
     }
 
