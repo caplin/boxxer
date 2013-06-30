@@ -333,6 +333,24 @@ Box.REG_PREFIX = "bbox_";
 Box._id = 0;
 
 /**
+ * static counter for zIndex
+ * @static
+ * @private
+ * @returns {number}
+ */
+Box._zIndex = 666;
+
+/**
+ * Return the current zIndex and increase it
+ * @returns {number}
+ */
+Box.getZIndex = function() {
+    var zIndex = Box._zIndex;
+    Box._zIndex++;
+    return zIndex;
+};
+
+/**
  * generates a unique "box_[...]"id
  * @static
  * @return {String}

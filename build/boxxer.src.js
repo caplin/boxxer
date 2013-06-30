@@ -1359,7 +1359,7 @@ ElementWrapper.prototype.maximize = function () {
     element.style.position = "absolute";
     element.style.left = "0";
     element.style.top = "0";
-    element.style.zIndex = "666";
+    element.style.zIndex = Box.getZIndex();
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
     return this;
@@ -2628,6 +2628,24 @@ Box.REG_PREFIX = "bbox_";
  * @type {Number}
  */
 Box._id = 0;
+
+/**
+ * static counter for zIndex
+ * @static
+ * @private
+ * @returns {number}
+ */
+Box._zIndex = 666;
+
+/**
+ * Return the current zIndex and increase it
+ * @returns {number}
+ */
+Box.getZIndex = function() {
+    var zIndex = Box._zIndex;
+    Box._zIndex++;
+    return zIndex;
+};
 
 /**
  * generates a unique "box_[...]"id

@@ -189,7 +189,7 @@ ElementWrapper.prototype.maximize = function () {
     element.style.position = "absolute";
     element.style.left = "0";
     element.style.top = "0";
-    element.style.zIndex = "666";
+    element.style.zIndex = Box.getZIndex();
     this.setElementDimension(document.width, document.height);
     BoxComponent.maximize(this);
     return this;
