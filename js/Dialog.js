@@ -14,6 +14,7 @@ function Dialog(width, height, left, right) {
     var element = this.getElement();
     element.setAttribute("class", "boxxer-Dialog");
     element.style.position = "absolute";
+    element.style.zIndex = Box.getZIndex();
 
     renderer.appendChild(element);
     renderer.removeChild(element);
