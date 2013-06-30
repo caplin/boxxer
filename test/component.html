@@ -39,10 +39,10 @@
     };
 
     // create our layout
-    var frame = boxxer.createBox().setName("myLayout");
-    var header = boxxer.createBox().addClass("header");
+    var frame = boxxer.createBox();
+    var header = boxxer.createBox();
     var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
-    var blotter = boxxer.createBox({height:2}).addClass("blotter");
+    var blotter = boxxer.createBox({height:2});
 
     // create a bunch of tiles
     for (var i = 0; i < 10; i++) {
