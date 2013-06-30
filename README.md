@@ -87,7 +87,7 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
     frame.addBox(header).addBox(tileSet).addBox(blotter);
 
     // render the frame
-    frame.render();
+    frame.render(true);
 
 ```
 
