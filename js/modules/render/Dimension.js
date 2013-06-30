@@ -78,6 +78,15 @@ Dimension.prototype.getMinimumValue = function () {
 };
 
 /**
+ * set the minimum value of the Dimension instance (useful to set custom minimized value)
+ * @public
+ * @returns {Number}
+ */
+Dimension.prototype.setMinimumValue = function (minValue) {
+    this._minValue = minValue;
+};
+
+/**
  * returns the value of the Dimension instance
  * @public
  * @returns {Number}

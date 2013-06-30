@@ -3,6 +3,9 @@ boxxer.createDecorator("MinimizeButton", {
     //engages custom template for Box
     engage: function (box, template) {
         var element = box.getElement();
+        console.log(box);
+        box.width.setMinimumValue(box.width.getValue());
+        box.height.setMinimumValue("40px");
         element.style.position = "relative";
         element.appendChild(template.getElement());
     },

@@ -19,7 +19,7 @@ function ElementWrapper(element) {
  * @private
  */
 ElementWrapper.prototype._setElementWidth = function (width) {
-    this.getElement().style.width = (width + "px");
+    this.getElement().style.width = (typeof width === 'string' ? width : width + "px");
     return this;
 };
 
@@ -28,7 +28,7 @@ ElementWrapper.prototype._setElementWidth = function (width) {
  * @private
  */
 ElementWrapper.prototype._setElementHeight = function (height) {
-    this.getElement().style.height = (height + "px");
+    this.getElement().style.height = (typeof height === 'string' ? height : height + "px");
     return this;
 };
 
@@ -218,6 +218,7 @@ ElementWrapper.prototype.maximize = function () {
  * Minimize the visual representation of the Box instance
  */
 ElementWrapper.prototype.minimize = function () {
+    console.log(this.width.getMinimumValue(), this.height.getMinimumValue());
     this.setElementDimension(this.width.getMinimumValue(), this.height.getMinimumValue());
     BoxComponent.minimize(this);
     this.emit(EventEmitter.ON_MINIMIZE);
