@@ -8,13 +8,11 @@ Here are the features aimed for. Not all have been implemented or are stable as 
 * Automatic handling of layout element resizing
 * Weight / Percentage / Fixed (px) dimension
 * Server side layout persistence in node
-* Modular so custom build are possible
 * Programatic approach to layout
 * Custom build capability
 * Component interfaces
 * Layout events firing
 * Decorators API
-* Easy to use API
 * more...
 
 ## Grunt build
