@@ -222,10 +222,12 @@ ElementWrapper.prototype.maximize = function () {
             position: "absolute",
             left: "0",
             top: "0",
+            right: "0",
+            bottom: "0",
             zIndex: Box.getZIndex()
         })
         .addClass("maximized")
-        .setElementDimension(document.width, document.height)
+        .setElementDimension(document.body.clientWidth, document.body.clientWidth)
         .emit(EventEmitter.ON_MAXIMIZE);
 
     BoxComponent.maximize(this);

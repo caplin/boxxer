@@ -401,8 +401,6 @@ Box.moveBox = function(box, origin, destination) {
     box.setParentElement(destination.getElement());
     destination.addBox(box);
     delete origin.getChildren()[box.getId()];
-
-    console.log(box);
 };
 
 /**
