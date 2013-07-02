@@ -1,9 +1,8 @@
 boxxer.createDecorator("RemoveButton", {
 
     initialize: function () {
-        var element = this.box.getElement();
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
     },
 
     getTemplate: function () {

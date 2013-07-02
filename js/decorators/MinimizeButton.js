@@ -1,14 +1,13 @@
 boxxer.createDecorator("MinimizeButton", {
 
     initialize: function () {
-        var element = this.box.getElement();
 
         // TODO this need to be a custom option
         this.box.width.setMinimumValue(this.box.width.getValue());
         this.box.height.setMinimumValue("40px");
 
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
     },
 
     getTemplate: function () {

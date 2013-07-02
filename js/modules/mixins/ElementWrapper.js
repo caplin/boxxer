@@ -115,6 +115,16 @@ ElementWrapper.prototype.setAttribute = function (attribute, value) {
 };
 
 /**
+ * Append a node to the box element
+ * @param node {HTMLElement}
+ */
+// TODO support nodeList
+ElementWrapper.prototype.append = function (node) {
+    this.getElement().appendChild(node);
+    return this;
+};
+
+/**
  * returns a data attribute of the DOM Element of the Box
  * @param attribute {String} name of the attribute
  * @return {String}

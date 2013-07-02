@@ -1,8 +1,9 @@
 boxxer.createDecorator("Drag", {
 
-    initialize: function (box) {
+    initialize: function () {
 
         var element = this.box.getElement();
+
         element.setAttribute("draggable", true);
 
         new DOMEvent(element)

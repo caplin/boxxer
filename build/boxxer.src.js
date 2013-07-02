@@ -566,7 +566,7 @@ function Decorator() {}
 
 /**
  * returns a predefined template
- * @param box {boxxer.Box}
+ * @param box {Box}
  * @returns {HTMLElement}
  */
 Decorator.prototype.getTemplate = function () {
@@ -1313,6 +1313,16 @@ ElementWrapper.prototype.setAttribute = function (attribute, value) {
             .setAttribute(attribute, value.toString());
     }
 
+    return this;
+};
+
+/**
+ * Append a node to the box element
+ * @param node {HTMLElement}
+ */
+// TODO support nodeList
+ElementWrapper.prototype.append = function (node) {
+    this.getElement().appendChild(node);
     return this;
 };
 
@@ -2220,9 +2230,8 @@ boxxer.createDecorator("BoxHeader", {
 
     //engages custom template for Box
     initialize: function () {
-        var element = this.box.getElement();
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
         this.box.height.setMinimumValue(this.template.getElement().style.height);
     },
 
@@ -2240,9 +2249,10 @@ boxxer.createDecorator("BoxHeader", {
 });
 boxxer.createDecorator("Drag", {
 
-    initialize: function (box) {
+    initialize: function () {
 
         var element = this.box.getElement();
+
         element.setAttribute("draggable", true);
 
         new DOMEvent(element)
@@ -2289,9 +2299,8 @@ boxxer.createDecorator("Drop", {
 boxxer.createDecorator("MaximizeButton", {
 
     initialize: function () {
-        var element = this.box.getElement();
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
     },
 
     getTemplate: function () {
@@ -2326,14 +2335,13 @@ boxxer.createDecorator("MaximizeButton", {
 boxxer.createDecorator("MinimizeButton", {
 
     initialize: function () {
-        var element = this.box.getElement();
 
         // TODO this need to be a custom option
         this.box.width.setMinimumValue(this.box.width.getValue());
         this.box.height.setMinimumValue("40px");
 
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
     },
 
     getTemplate: function () {
@@ -2365,12 +2373,22 @@ boxxer.createDecorator("MinimizeButton", {
         return button;
     }
 });
+boxxer.createDecorator("PanelControls", {
+
+    initialize: function () {
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
+    },
+
+    getTemplate: function () {
+
+    }
+});
 boxxer.createDecorator("RemoveButton", {
 
     initialize: function () {
-        var element = this.box.getElement();
-        element.style.position = "relative";
-        element.appendChild(this.template.getElement());
+        this.box.css({position:"relative"});
+        this.box.append(this.template.getElement());
     },
 
     getTemplate: function () {
