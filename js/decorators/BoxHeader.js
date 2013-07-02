@@ -1,20 +1,20 @@
 boxxer.createDecorator("BoxHeader", {
 
     //engages custom template for Box
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
         element.style.position = "relative";
-        element.appendChild(template.getElement());
-        box.height.setMinimumValue(template.getElement().style.height);
+        element.appendChild(this.template.getElement());
+        this.box.height.setMinimumValue(this.template.getElement().style.height);
     },
 
     //returns custom template
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var header = new ElementWrapper(document.createElement("h5"));
 
         header
-            .html(box.getName() || box.getId())
+            .html(this.box.getName() || this.box.getId())
             .addClass("boxHeader");
 
         return header;

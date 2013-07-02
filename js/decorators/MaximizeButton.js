@@ -1,12 +1,12 @@
 boxxer.createDecorator("MaximizeButton", {
 
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
         element.style.position = "relative";
-        element.appendChild(template.getElement());
+        element.appendChild(this.template.getElement());
     },
 
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var button = new ElementWrapper(document.createElement("button"));
 
@@ -30,7 +30,7 @@ boxxer.createDecorator("MaximizeButton", {
                     button.html("+");
                 }
             }
-        })(box, button));
+        })(this.box, button));
 
         return button;
     }

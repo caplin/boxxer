@@ -82,17 +82,9 @@ BoxRenderer.render = function (box, parent, flowDirection) {
  * @param box {Box}
  */
 BoxRenderer._applyDecorators = function (box) {
-    var decorator, template;
-    var decorators = box.getDecorators();
-    var length = decorators.length;
-    var i = 0;
-
-    for (; i < length; i++) {
-        decorator = Decorator.getDecorator(decorators[i]);
-        template = decorator.getTemplate(box);
-
-        decorator.engage(box, template);
-    }
+    box.getDecoratorNames().forEach(function(decoratorName) {
+        box._decorators.push(Decorator.get(decoratorName, box));
+    });
 };
 
 /**

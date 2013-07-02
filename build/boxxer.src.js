@@ -565,25 +565,16 @@ exports.Decorator = Decorator;
 function Decorator() {}
 
 /**
- * method needs to be overwritten!
- *
- * applies (engages) the decorator when the Box has been rendered
- *
- * @param box {boxxer.Box}
- * @param template {HTMLElement}
- * @returns {Decorator}
- */
-Decorator.prototype.engage = function (box, template) {
-    return this;
-};
-
-/**
  * returns a predefined template
  * @param box {boxxer.Box}
  * @returns {HTMLElement}
  */
-Decorator.prototype.getTemplate = function (box) {
-    return document.createElement("div");
+Decorator.prototype.getTemplate = function () {
+    var element = document.createElement(this.tagName || 'div');
+    if (this.className) {
+        element.className = className;
+    }
+    return element;
 };
 
 /**
@@ -603,12 +594,19 @@ Decorator.isRegistered = function (decoratorName) {
 };
 
 /**
- * returns the required decorator
- * @param decoratorName {String}
+ * returns an instance of the requested decorator
+ * @param decoratorName {String} The name reference for the decorator
+ * @param box {Box} box instance to apply decorator too
  * @returns {Decorator}
  */
-Decorator.getDecorator = function (decoratorName) {
-    return Decorator.extend(Decorator.registry[decoratorName]);
+Decorator.get = function (decoratorName, box) {
+    var decorator = Decorator.extend(Decorator.registry[decoratorName]);
+    decorator.box = box;
+    decorator.template = decorator.getTemplate();
+    if (typeof decorator.initialize === 'function') {
+        decorator.initialize();
+    }
+    return decorator;
 };
 
 /**
@@ -624,11 +622,6 @@ Decorator.extend = function (prototype) {
         if (prototype.hasOwnProperty(property)) {
             decorator[property] = prototype[property];
         }
-    }
-
-    //initialize decorator once
-    if (typeof decorator.init === "function") {
-        decorator.init();
     }
 
     return decorator;
@@ -1077,6 +1070,7 @@ Adjustable.prototype.setDimensions = function (width, height) {
     this.setHeight(height);
 };
 
+// TODO Move this file to the component directory
 exports.BoxComponent = BoxComponent;
 
 /**
@@ -1857,17 +1851,9 @@ BoxRenderer.render = function (box, parent, flowDirection) {
  * @param box {Box}
  */
 BoxRenderer._applyDecorators = function (box) {
-    var decorator, template;
-    var decorators = box.getDecorators();
-    var length = decorators.length;
-    var i = 0;
-
-    for (; i < length; i++) {
-        decorator = Decorator.getDecorator(decorators[i]);
-        template = decorator.getTemplate(box);
-
-        decorator.engage(box, template);
-    }
+    box.getDecoratorNames().forEach(function(decoratorName) {
+        box._decorators.push(Decorator.get(decoratorName, box));
+    });
 };
 
 /**
@@ -2233,20 +2219,20 @@ ViewContainer.prototype.serialize = function () {
 boxxer.createDecorator("BoxHeader", {
 
     //engages custom template for Box
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
         element.style.position = "relative";
-        element.appendChild(template.getElement());
-        box.height.setMinimumValue(template.getElement().style.height);
+        element.appendChild(this.template.getElement());
+        this.box.height.setMinimumValue(this.template.getElement().style.height);
     },
 
     //returns custom template
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var header = new ElementWrapper(document.createElement("h5"));
 
         header
-            .html(box.getName() || box.getId())
+            .html(this.box.getName() || this.box.getId())
             .addClass("boxHeader");
 
         return header;
@@ -2254,12 +2240,10 @@ boxxer.createDecorator("BoxHeader", {
 });
 boxxer.createDecorator("Drag", {
 
-    engage: function (box) {
+    initialize: function (box) {
 
-        var element = box.getElement();
+        var element = this.box.getElement();
         element.setAttribute("draggable", true);
-
-        this._box = box;
 
         new DOMEvent(element)
             .on("dragstart", this.onDragStart.bind(this))
@@ -2267,7 +2251,7 @@ boxxer.createDecorator("Drag", {
     },
 
     onDragStart: function() {
-        Box.dragTarget = this._box;
+        Box.dragTarget = this.box;
     },
 
     onDragEnd: function(event) {
@@ -2287,17 +2271,15 @@ boxxer.createDecorator("Drag", {
 });
 boxxer.createDecorator("Drop", {
 
-    engage: function (box) {
+    initialize: function () {
 
-        this._box = box;
-
-        new DOMEvent(box.getElement())
+        new DOMEvent(this.box.getElement())
             .on("dragenter", this.onDragEnter.bind(this))
             .on("dragleave", this.onDragLeave.bind(this));
     },
 
     onDragEnter : function() {
-        Box.dropTarget = this._box;
+        Box.dropTarget = this.box;
     },
 
     onDragLeave : function() {
@@ -2306,13 +2288,13 @@ boxxer.createDecorator("Drop", {
 });
 boxxer.createDecorator("MaximizeButton", {
 
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
         element.style.position = "relative";
-        element.appendChild(template.getElement());
+        element.appendChild(this.template.getElement());
     },
 
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var button = new ElementWrapper(document.createElement("button"));
 
@@ -2336,25 +2318,25 @@ boxxer.createDecorator("MaximizeButton", {
                     button.html("+");
                 }
             }
-        })(box, button));
+        })(this.box, button));
 
         return button;
     }
 });
 boxxer.createDecorator("MinimizeButton", {
 
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
 
         // TODO this need to be a custom option
-        box.width.setMinimumValue(box.width.getValue());
-        box.height.setMinimumValue("40px");
+        this.box.width.setMinimumValue(this.box.width.getValue());
+        this.box.height.setMinimumValue("40px");
 
         element.style.position = "relative";
-        element.appendChild(template.getElement());
+        element.appendChild(this.template.getElement());
     },
 
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var button = new ElementWrapper(document.createElement("button"));
 
@@ -2378,20 +2360,20 @@ boxxer.createDecorator("MinimizeButton", {
                     button.html("-");
                 }
             }
-        })(box, button));
+        })(this.box, button));
 
         return button;
     }
 });
 boxxer.createDecorator("RemoveButton", {
 
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
         element.style.position = "relative";
-        element.appendChild(template.getElement());
+        element.appendChild(this.template.getElement());
     },
 
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var button = new ElementWrapper(document.createElement("button"));
 
@@ -2405,7 +2387,7 @@ boxxer.createDecorator("RemoveButton", {
             })
             .addClass("remove");
 
-        new DOMEvent(button.getElement()).on("click", box.destroy.bind(box));
+        new DOMEvent(button.getElement()).on("click", this.box.destroy.bind(this.box));
 
         return button;
     }
@@ -2575,6 +2557,13 @@ function Box(width, height, parent) {
      * @private
      * @type {Array}
      */
+    this._decoratorNames = [];
+
+    /**
+     * array of initialized decorators
+     * @type {String}
+     * @private
+     */
     this._decorators = [];
 
     /**
@@ -2615,16 +2604,24 @@ mix(Box, BoxComponent);
  * @returns {Box}
  */
 Box.prototype.addDecorator = function (decoratorName) {
-    this._decorators.push(decoratorName);
+    this._decoratorNames.push(decoratorName);
     return this;
 };
 
 /**
- * returns the decorators registered for the Box instance
+ * returns an array of decorator names registered for the Box instance
+ * @returns {Array}
+ */
+Box.prototype.getDecoratorNames = function () {
+    return this._decoratorNames;
+};
+
+/**
+ * returns an array of decorators instances applied on the Box instance
  * @returns {Array}
  */
 Box.prototype.getDecorators = function () {
-    return this._decorators;
+    return this._decorators || [];
 };
 
 /**

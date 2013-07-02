@@ -1,3 +1,4 @@
+// TODO Move this file to the component directory
 exports.BoxComponent = BoxComponent;
 
 /**

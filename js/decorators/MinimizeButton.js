@@ -1,17 +1,17 @@
 boxxer.createDecorator("MinimizeButton", {
 
-    engage: function (box, template) {
-        var element = box.getElement();
+    initialize: function () {
+        var element = this.box.getElement();
 
         // TODO this need to be a custom option
-        box.width.setMinimumValue(box.width.getValue());
-        box.height.setMinimumValue("40px");
+        this.box.width.setMinimumValue(this.box.width.getValue());
+        this.box.height.setMinimumValue("40px");
 
         element.style.position = "relative";
-        element.appendChild(template.getElement());
+        element.appendChild(this.template.getElement());
     },
 
-    getTemplate: function (box) {
+    getTemplate: function () {
 
         var button = new ElementWrapper(document.createElement("button"));
 
@@ -35,7 +35,7 @@ boxxer.createDecorator("MinimizeButton", {
                     button.html("-");
                 }
             }
-        })(box, button));
+        })(this.box, button));
 
         return button;
     }

@@ -57,6 +57,13 @@ function Box(width, height, parent) {
      * @private
      * @type {Array}
      */
+    this._decoratorNames = [];
+
+    /**
+     * array of initialized decorators
+     * @type {String}
+     * @private
+     */
     this._decorators = [];
 
     /**
@@ -97,16 +104,24 @@ mix(Box, BoxComponent);
  * @returns {Box}
  */
 Box.prototype.addDecorator = function (decoratorName) {
-    this._decorators.push(decoratorName);
+    this._decoratorNames.push(decoratorName);
     return this;
 };
 
 /**
- * returns the decorators registered for the Box instance
+ * returns an array of decorator names registered for the Box instance
+ * @returns {Array}
+ */
+Box.prototype.getDecoratorNames = function () {
+    return this._decoratorNames;
+};
+
+/**
+ * returns an array of decorators instances applied on the Box instance
  * @returns {Array}
  */
 Box.prototype.getDecorators = function () {
-    return this._decorators;
+    return this._decorators || [];
 };
 
 /**

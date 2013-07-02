@@ -6,25 +6,16 @@ exports.Decorator = Decorator;
 function Decorator() {}
 
 /**
- * method needs to be overwritten!
- *
- * applies (engages) the decorator when the Box has been rendered
- *
- * @param box {boxxer.Box}
- * @param template {HTMLElement}
- * @returns {Decorator}
- */
-Decorator.prototype.engage = function (box, template) {
-    return this;
-};
-
-/**
  * returns a predefined template
  * @param box {boxxer.Box}
  * @returns {HTMLElement}
  */
-Decorator.prototype.getTemplate = function (box) {
-    return document.createElement("div");
+Decorator.prototype.getTemplate = function () {
+    var element = document.createElement(this.tagName || 'div');
+    if (this.className) {
+        element.className = className;
+    }
+    return element;
 };
 
 /**
@@ -44,12 +35,19 @@ Decorator.isRegistered = function (decoratorName) {
 };
 
 /**
- * returns the required decorator
- * @param decoratorName {String}
+ * returns an instance of the requested decorator
+ * @param decoratorName {String} The name reference for the decorator
+ * @param box {Box} box instance to apply decorator too
  * @returns {Decorator}
  */
-Decorator.getDecorator = function (decoratorName) {
-    return Decorator.extend(Decorator.registry[decoratorName]);
+Decorator.get = function (decoratorName, box) {
+    var decorator = Decorator.extend(Decorator.registry[decoratorName]);
+    decorator.box = box;
+    decorator.template = decorator.getTemplate();
+    if (typeof decorator.initialize === 'function') {
+        decorator.initialize();
+    }
+    return decorator;
 };
 
 /**
@@ -65,11 +63,6 @@ Decorator.extend = function (prototype) {
         if (prototype.hasOwnProperty(property)) {
             decorator[property] = prototype[property];
         }
-    }
-
-    //initialize decorator once
-    if (typeof decorator.init === "function") {
-        decorator.init();
     }
 
     return decorator;
