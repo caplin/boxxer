@@ -572,7 +572,7 @@ function Decorator() {}
 Decorator.prototype.getTemplate = function () {
     var element = document.createElement(this.tagName || 'div');
     if (this.className) {
-        element.className = className;
+        element.className = this.className;
     }
     return element;
 };

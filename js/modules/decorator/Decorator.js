@@ -7,13 +7,13 @@ function Decorator() {}
 
 /**
  * returns a predefined template
- * @param box {boxxer.Box}
+ * @param box {Box}
  * @returns {HTMLElement}
  */
 Decorator.prototype.getTemplate = function () {
     var element = document.createElement(this.tagName || 'div');
     if (this.className) {
-        element.className = className;
+        element.className = this.className;
     }
     return element;
 };
