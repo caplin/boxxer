@@ -68,7 +68,7 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
     // create our layout
     var frame = boxxer.createBox();
     var header = boxxer.createBox();
-    var tileSet = boxxer.createBox({height:5, flow:boxxer.Box.FLOW_HORIZONTAL});
+    var tileSet = boxxer.createBox({height:5, flow:"horizontal"});
     var blotter = boxxer.createBox({height:2});
 
     // create a bunch of tiles
@@ -80,8 +80,7 @@ See [API](https://github.com/caplin/boxxer/wiki/API "View API on wiki") and the 
             component: new Tile(),
             decorators: [
                 "BoxHeader",
-                "MaximizeButton",
-                "MinimizeButton"
+                "PanelControls"
             ]
         }));
     }
