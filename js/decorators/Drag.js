@@ -4,7 +4,7 @@ boxxer.createDecorator("Drag", {
 
         var element = this.box.getElement();
 
-        element.setAttribute("draggable", true);
+        element.setAttribute("draggable", "true");
 
         new DOMEvent(element)
             .on("dragstart", this.onDragStart.bind(this))
@@ -21,7 +21,7 @@ boxxer.createDecorator("Drag", {
 
         if (Box.dropTarget && Box.dragTarget) {
 
-            Box.dropTarget.getElement().appendChild(Box.dragTarget.getElement());
+            Box.dropTarget.append(Box.dragTarget.getElement());
 
             Box.moveBox(Box.dragTarget, Box.getById(Box.dragTarget.getParentElement().getAttribute("data-box-id")), Box.dropTarget);
 

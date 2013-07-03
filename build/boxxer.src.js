@@ -2285,34 +2285,13 @@ ViewContainer.prototype.destroy = function () {
 ViewContainer.prototype.serialize = function () {
     return '\"\"';
 };
-boxxer.createDecorator("BoxHeader", {
-
-    //engages custom template for Box
-    initialize: function () {
-        this.box.css({position:"relative"});
-        this.box.append(this.template.getElement());
-        this.box.height.setMinimumValue(this.template.getElement().style.height);
-    },
-
-    //returns custom template
-    getTemplate: function () {
-
-        var header = new ElementWrapper(document.createElement("h5"));
-
-        header
-            .html(this.box.getName() || this.box.getId())
-            .addClass("boxHeader");
-
-        return header;
-    }
-});
 boxxer.createDecorator("Drag", {
 
     initialize: function () {
 
         var element = this.box.getElement();
 
-        element.setAttribute("draggable", true);
+        element.setAttribute("draggable", "true");
 
         new DOMEvent(element)
             .on("dragstart", this.onDragStart.bind(this))
@@ -2329,7 +2308,7 @@ boxxer.createDecorator("Drag", {
 
         if (Box.dropTarget && Box.dragTarget) {
 
-            Box.dropTarget.getElement().appendChild(Box.dragTarget.getElement());
+            Box.dropTarget.append(Box.dragTarget.getElement());
 
             Box.moveBox(Box.dragTarget, Box.getById(Box.dragTarget.getParentElement().getAttribute("data-box-id")), Box.dropTarget);
 
@@ -2343,93 +2322,11 @@ boxxer.createDecorator("Drop", {
     initialize: function () {
 
         new DOMEvent(this.box.getElement())
-            .on("dragenter", this.onDragEnter.bind(this))
-            .on("dragleave", this.onDragLeave.bind(this));
+            .on("dragenter", this.onDragEnter.bind(this));
     },
 
     onDragEnter : function() {
         Box.dropTarget = this.box;
-    },
-
-    onDragLeave : function() {
-
-    }
-});
-boxxer.createDecorator("MaximizeButton", {
-
-    initialize: function () {
-        this.box.css({position:"relative"});
-        this.box.append(this.template.getElement());
-    },
-
-    getTemplate: function () {
-
-        var button = new ElementWrapper(document.createElement("button"));
-
-        button
-            .html("+")
-            // TODO handle this via CSS using the class
-            .css({
-                position: "absolute",
-                right: "27px",
-                top: "5px"
-            })
-            .addClass("maximize");
-
-        new DOMEvent(button.getElement()).on("click", (function(box, button){
-            return function() {
-                if (button.html() === "+") {
-                    box.maximize();
-                    button.html("~");
-                } else {
-                    box.restore();
-                    button.html("+");
-                }
-            }
-        })(this.box, button));
-
-        return button;
-    }
-});
-boxxer.createDecorator("MinimizeButton", {
-
-    initialize: function () {
-
-        // TODO this need to be a custom option
-        this.box.width.setMinimumValue(this.box.width.getValue());
-        this.box.height.setMinimumValue("40px");
-
-        this.box.css({position:"relative"});
-        this.box.append(this.template.getElement());
-    },
-
-    getTemplate: function () {
-
-        var button = new ElementWrapper(document.createElement("button"));
-
-        button
-            .html("-")
-            // TODO handle this via CSS using the class
-            .css({
-                position: "absolute",
-                right: "50px",
-                top: "5px"
-            })
-            .addClass("minimize");
-
-        new DOMEvent(button.getElement()).on("click", (function(box, button){
-            return function() {
-                if (button.html() === "-") {
-                    box.minimize();
-                    button.html("~");
-                } else {
-                    box.restore();
-                    button.html("-");
-                }
-            }
-        })(this.box, button));
-
-        return button;
     }
 });
 boxxer.createDecorator("PanelControls", {
@@ -2486,39 +2383,13 @@ boxxer.createDecorator("PanelControls", {
         return new ElementWrapper(document.createElement("div"))
             .addClass("panel-controls")
             .html(
-                '<div class="panel-title">Tile</div>' +
+                '<div class="panel-title">' + (this.box.getName() || this.box.getId()) + '</div>' +
                 '<div class="panel-buttons">' +
                     '<button class="panel-minimize">-</button>' +
                     '<button class="panel-maximize">+</button>' +
                     '<button class="panel-close">x</button>' +
                 '</div>'
             );
-    }
-});
-boxxer.createDecorator("RemoveButton", {
-
-    initialize: function () {
-        this.box.css({position:"relative"});
-        this.box.append(this.template.getElement());
-    },
-
-    getTemplate: function () {
-
-        var button = new ElementWrapper(document.createElement("button"));
-
-        button
-            .html("x")
-            // TODO handle this via CSS using the class
-            .css({
-                position: "absolute",
-                right: "5px",
-                top: "5px"
-            })
-            .addClass("remove");
-
-        new DOMEvent(button.getElement()).on("click", this.box.destroy.bind(this.box));
-
-        return button;
     }
 });
 exports.Dialog = Dialog;

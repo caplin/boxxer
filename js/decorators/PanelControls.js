@@ -52,7 +52,7 @@ boxxer.createDecorator("PanelControls", {
         return new ElementWrapper(document.createElement("div"))
             .addClass("panel-controls")
             .html(
-                '<div class="panel-title">Tile</div>' +
+                '<div class="panel-title">' + (this.box.getName() || this.box.getId()) + '</div>' +
                 '<div class="panel-buttons">' +
                     '<button class="panel-minimize">-</button>' +
                     '<button class="panel-maximize">+</button>' +
