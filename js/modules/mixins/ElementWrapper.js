@@ -24,6 +24,22 @@ ElementWrapper.prototype._setElementWidth = function (width) {
 };
 
 /**
+ * Returns the height of the element
+ * @returns {String}
+ */
+ElementWrapper.prototype.getElementHeight = function() {
+    return this.getElement().style.height;
+};
+
+/**
+ * Returns the width of the element
+ * @returns {String}
+ */
+ElementWrapper.prototype.getElementWidth = function() {
+    return this.getElement().style.width;
+};
+
+/**
  * @param height {Number}
  * @private
  */
@@ -264,6 +280,8 @@ ElementWrapper.prototype.restore = function () {
             position: "relative",
             left: "auto",
             top: "auto",
+            bottom: "auto",
+            right: "auto",
             zIndex: "auto"
         })
         .removeClass("maximized")

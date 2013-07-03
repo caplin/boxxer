@@ -566,7 +566,6 @@ function Decorator() {}
 
 /**
  * returns a predefined template
- * @param box {Box}
  * @returns {HTMLElement}
  */
 Decorator.prototype.getTemplate = function () {
@@ -603,10 +602,52 @@ Decorator.get = function (decoratorName, box) {
     var decorator = Decorator.extend(Decorator.registry[decoratorName]);
     decorator.box = box;
     decorator.template = decorator.getTemplate();
+
+    if (decorator.events) {
+        Decorator.setupEvents(decorator);
+    }
+
     if (typeof decorator.initialize === 'function') {
         decorator.initialize();
     }
     return decorator;
+};
+
+/**
+ * Handle events binding on decorators using the events property map
+ * @param decorator {Decorator}
+ */
+Decorator.setupEvents = function(decorator) {
+    var events = decorator.events;
+    var template = decorator.template;
+    var event;
+
+    for(event in events) {
+        new DOMEvent(template.getElement()).on(event, function(domEvent) {
+            Decorator.handleEvent(domEvent, decorator);
+        });
+    }
+};
+
+/**
+ * Handle event fired in a decorator and trigger methods based on the events map
+ * @param domEvent {DOMEvent}
+ * @param decorator {Decorator}
+ */
+Decorator.handleEvent = function(domEvent, decorator) {
+
+    var queries = decorator.events[domEvent.type];
+    var target = new ElementWrapper(domEvent.target);
+    var query;
+
+    for (query in queries) {
+        // TODO we want to support all queries ideally not just single class or id
+        // Probably need to build a map of target in setup for faster processing when events are fired
+        if (target.hasClass(query.substring(1, query.length)) || target.id === query.substring(1, query.length)) {
+            decorator[queries[query]].apply(decorator, [domEvent]);
+        }
+    }
+
 };
 
 /**
@@ -1226,6 +1267,22 @@ ElementWrapper.prototype._setElementWidth = function (width) {
 };
 
 /**
+ * Returns the height of the element
+ * @returns {String}
+ */
+ElementWrapper.prototype.getElementHeight = function() {
+    return this.getElement().style.height;
+};
+
+/**
+ * Returns the width of the element
+ * @returns {String}
+ */
+ElementWrapper.prototype.getElementWidth = function() {
+    return this.getElement().style.width;
+};
+
+/**
  * @param height {Number}
  * @private
  */
@@ -1466,6 +1523,8 @@ ElementWrapper.prototype.restore = function () {
             position: "relative",
             left: "auto",
             top: "auto",
+            bottom: "auto",
+            right: "auto",
             zIndex: "auto"
         })
         .removeClass("maximized")
@@ -2375,13 +2434,65 @@ boxxer.createDecorator("MinimizeButton", {
 });
 boxxer.createDecorator("PanelControls", {
 
+    events: {
+        click: {
+            ".panel-minimize": "onMinimize",
+            ".panel-maximize": "onMaximize",
+            ".panel-close": "onClose"
+        }
+    },
+
     initialize: function () {
         this.box.css({position:"relative"});
         this.box.append(this.template.getElement());
+
+        this.box.width.setMinimumValue(this.box.width.getValue());
+        this.box.height.setMinimumValue(this.template.getElementHeight());
+
+        this.minimized = false;
+        this.maximized = false;
+    },
+
+    reset: function(property) {
+        this[property] = false;
+        this.box.restore();
+    },
+
+    onMinimize: function() {
+        this.minimized = !this.minimized;
+        if (this.minimized) {
+            this.reset("maximized");
+            this.box.minimize();
+        } else {
+            this.box.restore();
+        }
+    },
+
+    onMaximize: function() {
+        this.maximized = !this.maximized;
+        if (this.maximized) {
+            this.reset("minimized");
+            this.box.maximize();
+        } else {
+            this.box.restore();
+        }
+    },
+
+    onClose: function() {
+        this.box.destroy();
     },
 
     getTemplate: function () {
-
+        return new ElementWrapper(document.createElement("div"))
+            .addClass("panel-controls")
+            .html(
+                '<div class="panel-title">Tile</div>' +
+                '<div class="panel-buttons">' +
+                    '<button class="panel-minimize">-</button>' +
+                    '<button class="panel-maximize">+</button>' +
+                    '<button class="panel-close">x</button>' +
+                '</div>'
+            );
     }
 });
 boxxer.createDecorator("RemoveButton", {

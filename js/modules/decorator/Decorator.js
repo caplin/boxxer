@@ -7,7 +7,6 @@ function Decorator() {}
 
 /**
  * returns a predefined template
- * @param box {Box}
  * @returns {HTMLElement}
  */
 Decorator.prototype.getTemplate = function () {
@@ -44,10 +43,52 @@ Decorator.get = function (decoratorName, box) {
     var decorator = Decorator.extend(Decorator.registry[decoratorName]);
     decorator.box = box;
     decorator.template = decorator.getTemplate();
+
+    if (decorator.events) {
+        Decorator.setupEvents(decorator);
+    }
+
     if (typeof decorator.initialize === 'function') {
         decorator.initialize();
     }
     return decorator;
+};
+
+/**
+ * Handle events binding on decorators using the events property map
+ * @param decorator {Decorator}
+ */
+Decorator.setupEvents = function(decorator) {
+    var events = decorator.events;
+    var template = decorator.template;
+    var event;
+
+    for(event in events) {
+        new DOMEvent(template.getElement()).on(event, function(domEvent) {
+            Decorator.handleEvent(domEvent, decorator);
+        });
+    }
+};
+
+/**
+ * Handle event fired in a decorator and trigger methods based on the events map
+ * @param domEvent {DOMEvent}
+ * @param decorator {Decorator}
+ */
+Decorator.handleEvent = function(domEvent, decorator) {
+
+    var queries = decorator.events[domEvent.type];
+    var target = new ElementWrapper(domEvent.target);
+    var query;
+
+    for (query in queries) {
+        // TODO we want to support all queries ideally not just single class or id
+        // Probably need to build a map of target in setup for faster processing when events are fired
+        if (target.hasClass(query.substring(1, query.length)) || target.id === query.substring(1, query.length)) {
+            decorator[queries[query]].apply(decorator, [domEvent]);
+        }
+    }
+
 };
 
 /**
