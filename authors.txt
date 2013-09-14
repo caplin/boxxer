@@ -1,0 +1,5 @@
+Created by Bence Kormos (https://github.com/benqus)
+
+Developers:
+    Bence Kormos (https://github.com/benqus)
+    Gilles Cochez (https://github.com/gillescochez)
